@@ -88,12 +88,7 @@ class ResearcherAgent(BaseAgent):
             strategy = "regex_article_override"
             print(f"[ResearcherAgent] Regex found article {regex_article} (LLM missed it)")
 
-        # Build filter dictionary
-        filter_dict = {}
-        if article_ref:
-            filter_dict["article_number"] = article_ref
-            
-        filter_dict = filter_dict if filter_dict else None
+        filter_dict = {"article_number": article_ref} if article_ref else None
 
         # Execute the search against the legal collection
         if article_ref:
@@ -102,23 +97,14 @@ class ResearcherAgent(BaseAgent):
         else:
             results = search(extracted_query, LEGAL_AR_COLLECTION, top_k=TOP_K)
             strategy += "_semantic"
-        
-        # Calculate relevance scores for each document
-        scored_docs = []
-        for doc in results:
-            relevance = 1.0  # Default high relevance
-            if hasattr(doc, 'metadata'):
-                # Could add additional relevance logic here
-                pass
-            scored_docs.append(doc)
-        
+
         return {
-            "retrieved_docs": scored_docs,
+            "retrieved_docs": results,
             "search_metadata": {
                 "strategy": strategy,
                 "extracted_query": extracted_query,
                 "article_number": article_ref,
-                "num_results": len(scored_docs),
-                "max_relevance": 1.0 if scored_docs else 0.0,
+                "num_results": len(results),
+                "max_relevance": 1.0 if results else 0.0,
             },
         }

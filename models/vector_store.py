@@ -15,6 +15,9 @@ from utils.config import (
     get_embedding_function,
 )
 
+_legal_collection_cache: Chroma | None = None
+_collection_cache: dict[str, Chroma] = {}
+
 
 def _get_chroma_client() -> chromadb.ClientAPI:
     """Return a persistent ChromaDB client."""
@@ -23,19 +26,30 @@ def _get_chroma_client() -> chromadb.ClientAPI:
 
 def get_legal_collection() -> Chroma:
     """Return the main legal_ar Chroma collection (LangChain wrapper)."""
-    return Chroma(
-        collection_name=LEGAL_AR_COLLECTION,
-        embedding_function=get_embedding_function(),
-persist_directory=CHROMA_DB_PATH,
-    )
+    global _legal_collection_cache
+    if _legal_collection_cache is None:
+        _legal_collection_cache = Chroma(
+            collection_name=LEGAL_AR_COLLECTION,
+            embedding_function=get_embedding_function(),
+            persist_directory=CHROMA_DB_PATH,
+        )
+    return _legal_collection_cache
+
+
+def _get_cached_collection(collection_name: str) -> Chroma:
+    """Return a cached Chroma collection instance."""
+    if collection_name not in _collection_cache:
+        _collection_cache[collection_name] = Chroma(
+            collection_name=collection_name,
+            embedding_function=get_embedding_function(),
+            persist_directory=CHROMA_DB_PATH,
+        )
+    return _collection_cache[collection_name]
 
 
 def add_documents(documents: list[Document], collection_name: str = LEGAL_AR_COLLECTION) -> None:
     """
     Add a list of LangChain Documents to the specified ChromaDB collection.
-
-    The Chroma collection (and its embedding model) is instantiated once.
-    No internal batching is performed — the caller controls batch size.
 
     Args:
         documents: List of Document objects with page_content and metadata.
@@ -45,12 +59,7 @@ def add_documents(documents: list[Document], collection_name: str = LEGAL_AR_COL
         print(f"[VectorStore] No documents to add to '{collection_name}'.")
         return
 
-    collection = Chroma(
-        collection_name=collection_name,
-        embedding_function=get_embedding_function(),
-        persist_directory=CHROMA_DB_PATH,
-    )
-
+    collection = _get_cached_collection(collection_name)
     collection.add_documents(documents)
     print(f"[VectorStore] Added {len(documents)} documents to '{collection_name}'.")
 
@@ -73,11 +82,7 @@ def search(
     Returns:
         List of matching Document objects.
     """
-    collection = Chroma(
-        collection_name=collection_name,
-        embedding_function=get_embedding_function(),
-        persist_directory=CHROMA_DB_PATH,
-    )
+    collection = _get_cached_collection(collection_name)
 
     kwargs = {"k": top_k}
     if filter_dict:

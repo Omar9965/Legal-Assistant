@@ -30,6 +30,7 @@ PDF_DIR = os.path.join(BASE_DIR, "PDF")
 # ── Retrieval Settings ────────────────────────────────────────────────────────
 SIMILARITY_THRESHOLD = float(os.getenv("SIMILARITY_THRESHOLD"))
 TOP_K = int(os.getenv("TOP_K"))
+EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", "cpu")
 
 # ── Collection Names ──────────────────────────────────────────────────────────
 LEGAL_AR_COLLECTION = "legal_ar"
@@ -46,7 +47,7 @@ def get_embedding_function():
     """Return HuggingFace embedding (multilingual)."""
     return HuggingFaceEmbeddings(
         model_name=EMBEDDING_MODEL_NAME,
-        model_kwargs={"device": "cpu"},
+        model_kwargs={"device": EMBEDDING_DEVICE},
         encode_kwargs={"normalize_embeddings": True},
     )
 

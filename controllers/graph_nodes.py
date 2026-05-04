@@ -167,18 +167,17 @@ def scribe_node(state: AgentState) -> dict:
     """Step 4: Generate the final legal response."""
     retrieved_docs = state.get("retrieved_docs", [])
     search_metadata = state.get("search_metadata", {})
-    cache_result = len(retrieved_docs) > 0
-    
-    # Extract quality context
+    has_retrieved_docs = len(retrieved_docs) > 0
+
     num_docs = len(retrieved_docs)
     max_relevance = search_metadata.get("max_relevance", 1.0 if retrieved_docs else 0.0)
-    
+
     answer = scribe_agent.execute(
         query=state["query"],
         retrieved_docs=retrieved_docs,
         conversation_history=state.get("conversation_history", []),
         language=state.get("language", "ar"),
-        cache_result=cache_result,
+        cache_result=has_retrieved_docs,
         num_docs=num_docs,
         max_relevance=max_relevance,
     )

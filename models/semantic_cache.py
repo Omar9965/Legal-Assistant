@@ -19,6 +19,8 @@ from utils.config import (
 from langchain_core.documents import Document
 from models.document_processor import extract_article_number
 
+_cache_collection_cache: Chroma | None = None
+
 
 def _enrich_query(query: str) -> str:
     """
@@ -32,12 +34,15 @@ def _enrich_query(query: str) -> str:
 
 
 def _get_cache_collection() -> Chroma:
-    """Return the semantic_cache Chroma collection."""
-    return Chroma(
-        collection_name=SEMANTIC_CACHE_COLLECTION,
-        embedding_function=get_embedding_function(),
-        persist_directory=CHROMA_DB_PATH,
-    )
+    """Return the semantic_cache Chroma collection (cached)."""
+    global _cache_collection_cache
+    if _cache_collection_cache is None:
+        _cache_collection_cache = Chroma(
+            collection_name=SEMANTIC_CACHE_COLLECTION,
+            embedding_function=get_embedding_function(),
+            persist_directory=CHROMA_DB_PATH,
+        )
+    return _cache_collection_cache
 
 
 def lookup(query: str) -> tuple[str | None, float]:

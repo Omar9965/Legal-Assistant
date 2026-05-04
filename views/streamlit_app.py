@@ -35,8 +35,6 @@ SIDEBAR_TITLE_MAX_CHARS = 25
 AVATAR_USER = "👤"
 AVATAR_ASSISTANT = "⚖️"
 
-CSS_PATH = os.path.join(os.path.dirname(__file__), "styles.css")
-
 # ── Page Config ───────────────────────────────────────────────────────────────
 
 st.set_page_config(
