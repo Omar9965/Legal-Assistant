@@ -9,7 +9,7 @@ import sys
 import subprocess
 import time
 from controllers.graph import get_graph
-
+from utils.config import get_embedding_function, get_llm
 
 def preload_dependencies():
     """Pre-compile graph and load models before Streamlit starts."""
@@ -17,7 +17,7 @@ def preload_dependencies():
 
     start = time.time()
 
-    from utils.config import get_embedding_function, get_llm
+
     get_embedding_function()
     get_llm()
 
