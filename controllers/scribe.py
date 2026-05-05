@@ -1,5 +1,5 @@
 """
-Scribe — Generates formal, structured legal responses using Gemini.
+Scribe — Generates formal, structured legal responses.
 
 Takes retrieved legal context and conversation history to produce
 grounded, well-cited legal answers.
@@ -109,7 +109,7 @@ class ScribeAgent(BaseAgent):
         retrieved_docs: list[Document],
         conversation_history: list = None,
         language: str = "ar",
-        cache_result: bool = True,
+        should_cache: bool = True,
         num_docs: int = 0,
         max_relevance: float = 1.0,
     ) -> str:
@@ -121,7 +121,7 @@ class ScribeAgent(BaseAgent):
             retrieved_docs: List of relevant Document objects from retrieval.
             conversation_history: List of past messages [{"role": ..., "content": ...}].
             language: Response language ("ar" or "en").
-            cache_result: Whether to store the result in semantic cache.
+            should_cache: Whether to store the result in semantic cache.
         
         Returns:
             The generated legal response as a string.
@@ -145,7 +145,7 @@ class ScribeAgent(BaseAgent):
         answer = response.content.strip()
 
         # Store in semantic cache
-        if cache_result and answer:
+        if should_cache and answer:
             try:
                 cache_store(query, answer)
             except Exception as e:

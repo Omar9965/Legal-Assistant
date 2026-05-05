@@ -22,8 +22,12 @@ if HF_TOKEN:
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CHROMA_DB_PATH = os.getenv("CHROMA_DB_PATH", os.path.join(BASE_DIR, "data", "chroma_db"))
-CHECKPOINT_DB_PATH = os.getenv("CHECKPOINT_DB_PATH", os.path.join(BASE_DIR, "data", "checkpoints.db"))
+
+_raw_chroma = os.getenv("CHROMA_DB_PATH", os.path.join(BASE_DIR, "data", "chroma_db"))
+CHROMA_DB_PATH = _raw_chroma if os.path.isabs(_raw_chroma) else os.path.join(BASE_DIR, _raw_chroma)
+
+_raw_checkpoint = os.getenv("CHECKPOINT_DB_PATH", os.path.join(BASE_DIR, "data", "checkpoints.db"))
+CHECKPOINT_DB_PATH = _raw_checkpoint if os.path.isabs(_raw_checkpoint) else os.path.join(BASE_DIR, _raw_checkpoint)
 PROCESSED_DIR = os.path.join(BASE_DIR, "data", "processed")
 PDF_DIR = os.path.join(BASE_DIR, "PDF")
 

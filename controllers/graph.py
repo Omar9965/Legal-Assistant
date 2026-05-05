@@ -17,6 +17,7 @@ from controllers.graph_nodes import (
 from controllers.graph_edges import (
     is_legal_check, cache_hit_check, retrieval_quality_check
 )
+from IPython.display import display
 
 
 # ── Build the Graph ──────────────────────────────────────────────────────────
@@ -84,6 +85,9 @@ def build_graph():
 
     checkpointer = get_checkpointer()
     graph = workflow.compile(checkpointer=checkpointer)
+    graph_image = display(graph.draw_mermaid_png())
+    graph_image.save("graph.png")
+
     return graph
 # ── Convenience function ─────────────────────────────────────────────────────
 
@@ -140,3 +144,9 @@ def run_query(query: str, conversation_history: list = None, thread_id: str = "d
         "is_legal": final_state.get("is_legal", True),
     }
 
+def main():
+    graph = get_graph()
+
+
+if __name__ == "__main__":
+    main()

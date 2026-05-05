@@ -371,9 +371,11 @@ def render_sidebar() -> None:
             _render_conversation_list()
 
         st.markdown("---")
+        from utils.config import LLM_MODEL_NAME
+        model_display = LLM_MODEL_NAME or "OpenRouter LLM"
         st.markdown(
             "<p style='text-align:center;color:#64748b;font-size:0.75rem;'>"
-            "Powered by Gemma 4 31B via OpenRouter<br>"
+            f"Powered by {model_display} via OpenRouter<br>"
             "Egyptian Civil Code AI Assistant<br>"
             f"Chat: {st.session_state.current_thread_id[:8]}..."
             "</p>",

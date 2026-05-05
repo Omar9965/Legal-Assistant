@@ -7,41 +7,82 @@ Usage: python app.py
 import os
 import sys
 import subprocess
-import time
-from controllers.graph import get_graph
-from utils.config import get_embedding_function, get_llm
-
-def preload_dependencies():
-    """Pre-compile graph and load models before Streamlit starts."""
-    print("Loading AI models and compiling graph...")
-
-    start = time.time()
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import List
 
 
-    get_embedding_function()
-    get_llm()
+@dataclass
+class StreamlitConfig:
+    """Configuration for the Streamlit application."""
+    app_path: str
+    headless: bool = True
+    theme_base: str = "dark"
 
-    get_graph()
 
-    elapsed = time.time() - start
-    print(f"Dependencies loaded in {elapsed:.1f}s\n")
+class ApplicationRunner(ABC):
+    """
+    Abstract base class defining the contract for running an application.
+    Follows Dependency Inversion Principle (DIP) and Open/Closed Principle (OCP).
+    """
+    @abstractmethod
+    def run(self) -> None:
+        pass
+
+
+class StreamlitRunner(ApplicationRunner):
+    """
+    Responsible solely for launching and managing a Streamlit process.
+    Follows Single Responsibility Principle (SRP).
+    """
+    def __init__(self, config: StreamlitConfig):
+        self.config = config
+
+    def _build_command(self) -> List[str]:
+        return [
+            sys.executable, "-m", "streamlit", "run",
+            self.config.app_path,
+            "--server.headless", str(self.config.headless).lower(),
+            "--theme.base", self.config.theme_base,
+        ]
+
+    def run(self) -> None:
+        print("⚖️  Starting Legal AI Assistant...")
+        print(f"   Streamlit app: {self.config.app_path}")
+        print("   Press Ctrl+C to stop.\n")
+        
+        try:
+            subprocess.run(self._build_command(), check=True)
+        except KeyboardInterrupt:
+            print("\nShutting down Legal AI Assistant.")
+        except subprocess.CalledProcessError as e:
+            print(f"\nError: Streamlit process exited with code {e.returncode}")
+
+
+class LegalAIAppFacade:
+    """
+    Facade pattern to simplify the initialization and execution of the application.
+    """
+    def __init__(self, runner: ApplicationRunner):
+        self._runner = runner
+        
+    def start(self) -> None:
+        # Additional startup orchestration could go here
+        self._runner.run()
 
 
 def main():
-    preload_dependencies()
-
-    app_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "views", "streamlit_app.py")
-
-    print("⚖️  Starting Legal AI Assistant...")
-    print(f"   Streamlit app: {app_path}")
-    print("   Press Ctrl+C to stop.\n")
-
-    subprocess.run([
-        sys.executable, "-m", "streamlit", "run",
-        app_path,
-        "--server.headless", "true",
-        "--theme.base", "dark",
-    ])
+    # Construct paths
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    app_path = os.path.join(base_dir, "views", "streamlit_app.py")
+    
+    # Initialize dependencies
+    config = StreamlitConfig(app_path=app_path)
+    runner = StreamlitRunner(config)
+    
+    # Run application via Facade
+    app = LegalAIAppFacade(runner)
+    app.start()
 
 
 if __name__ == "__main__":

@@ -1,8 +1,15 @@
+from typing import List
+
+from langchain_core.prompts import ChatPromptTemplate
+
 from controllers.graph_state import AgentState
 from controllers.router import RouterAgent
 from controllers.cache_controller import CacheAgent
 from controllers.researcher import ResearcherAgent
 from controllers.scribe import ScribeAgent
+from utils.config import get_llm
+from models.query_expansion import expand_query, decompose_complex_query
+from models.query_expansion import expand_with_legal_terms
 
 router_agent = RouterAgent()
 cache_agent = CacheAgent()
@@ -177,7 +184,7 @@ def scribe_node(state: AgentState) -> dict:
         retrieved_docs=retrieved_docs,
         conversation_history=state.get("conversation_history", []),
         language=state.get("language", "ar"),
-        cache_result=has_retrieved_docs,
+        should_cache=has_retrieved_docs,
         num_docs=num_docs,
         max_relevance=max_relevance,
     )
@@ -195,39 +202,85 @@ def reformulate_node(state: AgentState) -> dict:
     query = state.get("query", "")
     language = state.get("language", "ar")
     
-    # Get the LLM to reformulate
-    from langchain_core.prompts import ChatPromptTemplate
-    from utils.config import get_llm
+    # Get original search results quality
+    retrieval_quality = state.get("last_retrieval_quality", "insufficient")
+    previous_results = state.get("retrieved_docs", [])
+    
+    # Use multi-query expansion to generate alternatives
+   
+    
+    # Generate multiple reformulation strategies
+    reformulations = []
+    
+    # Strategy 1: Basic LLM reformulation
+    reformulations.extend(_llm_reformulate(query, language))
+    
+    # Strategy 2: Query expansion
+    expanded_queries = expand_query(query, language, max_variations=2)
+    reformulations.extend(expanded_queries[1:])  # Skip original
+    
+    # Strategy 3: Decomposition for complex queries
+    decomposed = decompose_complex_query(query, language)
+    if len(decomposed) > 1:
+        reformulations.extend(decomposed[1:])  # Skip original
+    
+    # Strategy 4: Legal terminology enhancement
+    
+    legal_enhanced = expand_with_legal_terms(query, language)
+    if legal_enhanced != query:
+        reformulations.append(legal_enhanced)
+    
+    # Remove duplicates and limit to top 3
+    unique_reformulations = []
+    seen = set()
+    for reformulation in reformulations:
+        if reformulation not in seen and len(unique_reformulations) < 3:
+            unique_reformulations.append(reformulation)
+            seen.add(reformulation)
+    
+    # Pick the best (first) reformulation as the single retry query
+    best_reformulation = unique_reformulations[0] if unique_reformulations else query
+    
+    trace_entry = f"[Reformulate] Original: '{query}' → Selected: '{best_reformulation}' | All alternatives: {', '.join([f'\"{ r}\"' for r in unique_reformulations])}"
+    debug_trace = state.get("debug_trace", []) + [trace_entry]
+    
+    return {
+        "reformulated_query": best_reformulation,
+        "debug_trace": debug_trace,
+    }
+
+
+def _llm_reformulate(query: str, language: str) -> List[str]:
+    """Generate LLM-based query reformulations."""
     
     reformulate_prompt = ChatPromptTemplate.from_messages([
-        ("system", """You are a legal query reformulation expert.
-The previous retrieval attempt returned insufficient or empty results.
-Reformulate this query to improve semantic search results.
-
-Guidelines:
-- Make the query more generic/broader if too specific
-- Add relevant legal keywords in Arabic
-- Consider alternative phrasings for the same legal concept
-- If user mentioned article number, keep it
-
-Return ONLY the reformulated query as a single sentence.
-Do NOT add explanations or quotes."""),
+        ("system", """You are a legal query reformulation expert for Egyptian Civil Code.
+        
+        The user's previous search returned insufficient or empty results.
+        Generate 3 different reformulated queries that would improve semantic search results.
+        
+        Guidelines:
+        - Make the query more generic/broader if too specific
+        - Add relevant legal keywords in Arabic
+        - Consider alternative phrasings for the same legal concept
+        - If user mentioned article number, keep it
+        - Focus on different angles of the same legal question
+        - Use natural legal language
+        
+        Return exactly 3 reformulated queries, one per line.
+        Do NOT add explanations, numbering, or quotes."""),
         ("human", f"Original query: {query}\nLanguage: {language}")
     ])
     
     try:
         llm = get_llm()
         chain = reformulate_prompt | llm
-        response = chain.invoke({"query": query, "lang": language})
-        reformulated = response.content.strip()
+        response = chain.invoke({"query": query, "language": language})
+        reformulations = [r.strip() for r in response.content.strip().split('\n') if r.strip()]
+        return reformulations[:3]  # Ensure we return at most 3
     except Exception as e:
-        print(f"[Reformulate] Error: {e}")
-        reformulated = query
+        print(f"[LLM Reformulate] Error: {e}")
+        return [query]  # Fallback to original
+
+
     
-    trace_entry = f"[Reformulate] '{query}' → '{reformulated}'"
-    debug_trace = state.get("debug_trace", []) + [trace_entry]
-    
-    return {
-        "reformulated_query": reformulated,
-        "debug_trace": debug_trace,
-    }
