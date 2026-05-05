@@ -13,7 +13,7 @@ from utils.config import get_embedding_function, get_llm
 
 def preload_dependencies():
     """Pre-compile graph and load models before Streamlit starts."""
-    print("⏳ Loading AI models and compiling graph...")
+    print("Loading AI models and compiling graph...")
 
     start = time.time()
 
@@ -24,7 +24,7 @@ def preload_dependencies():
     get_graph()
 
     elapsed = time.time() - start
-    print(f"✓ Dependencies loaded in {elapsed:.1f}s\n")
+    print(f"Dependencies loaded in {elapsed:.1f}s\n")
 
 
 def main():
