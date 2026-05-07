@@ -33,6 +33,9 @@ The system is designed with a strict MVC (Model-View-Controller) structure, maki
 - **Views (`views/`)**: Presentation layer built using Streamlit.
 
 ### Multi-Agent Flow
+
+![LangGraph Workflow Architecture](graph.png)
+
 The core of the application relies on specialized LangChain/LangGraph agents, forming a state machine defined in `controllers/graph.py`:
 
 1. **RouterAgent**: The entry point of the graph. It classifies the user's query intent (e.g., legal question, general greeting, or out-of-domain) and detects the requested language.
