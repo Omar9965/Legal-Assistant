@@ -4,55 +4,70 @@
 ![Framework](https://img.shields.io/badge/LangGraph-Agentic-orange)
 ![UI](https://img.shields.io/badge/UI-Streamlit-red)
 ![VectorStore](https://img.shields.io/badge/VectorStore-ChromaDB-blue)
+![LLM](https://img.shields.io/badge/LLM-OpenRouter-green)
 
-An advanced, agentic AI legal assistant specialized in the **Egyptian Civil Code**. Built using the LangGraph framework, this project employs a robust multi-agent architecture to route queries, perform deep semantic research, cache responses, and generate structured bilingual answers.
+An advanced, agentic AI legal assistant specialized in the **Egyptian Civil Code**. Built using the **LangGraph framework**, this project employs a highly-optimized, multi-agent architecture to classify queries, perform deep semantic research, cache responses, and generate structured bilingual answers.
 
-The system is designed with a strict MVC (Model-View-Controller) structure, making it highly modular and extensible. The agents adhere to an Object-Oriented paradigm following SOLID principles, ensuring scalability and ease of maintenance.
-
----
-
-## ✨ Key Features
-
-- **Agentic Workflow Engine:** Orchestrated by **LangGraph**, it acts as a state machine that dynamically coordinates multiple specialized agents. The graph is lazily compiled and cached to ensure optimal execution speeds.
-- **Object-Oriented Agents:** Agents inherit from a central `BaseAgent` abstract class (`controllers/base_agent.py`) for strict interface adherence and single responsibility. Agents are initialized as singletons at the module level.
-- **Bilingual Interface:** Detects the language of the query and operates fluently in both Arabic and English, allowing for seamless context translation.
-- **RAG & Vector Retrieval:** Employs **ChromaDB** (`models/vector_store.py`) with advanced sentence transformers to securely search across base legal collections (stored in the `legal_ar` collection) and user-uploaded legal PDFs.
-- **Optimized Embeddings:** Uses HuggingFace's `mohamed2811/Muffakir_Embedding_V2` model, specifically selected for its superior performance on multilingual Arabic text. Embeddings run completely locally.
-- **Semantic Caching:** Identifies previously answered concepts and matches semantic similarity using a dedicated `semantic_cache` ChromaDB collection to bypass LLM calls, responding instantaneously and significantly reducing API overhead.
-- **Conversational Memory:** Uses `langgraph-checkpoint-sqlite` to persist state across conversation threads (using `thread_id`), managing history and contextualizing follow-up questions over long, complex sessions.
-- **Interactive UI:** Powered by **Streamlit**, providing a clean, responsive, and dark-themed Legal chat interface. Heavy models and embeddings are preloaded on startup using `@st.cache_resource`.
-- **Robust Ingestion Pipeline:** A dedicated `process.py` module to parse, clean, chunk (preserving RTL properties), and index large Arabic legal PDFs into the vector store. Uses MD5 hashing to skip unchanged files for rapid processing.
+The system is designed with a strict **MVC (Model-View-Controller)** structure, making it highly modular and extensible. The agents adhere to an Object-Oriented paradigm following SOLID principles, ensuring scalability and ease of maintenance.
 
 ---
 
-## 🧠 Architecture Overview
+## ✨ Key Features & Capabilities
 
-### Model-View-Controller (MVC) Layout
-- **Controllers (`controllers/`)**: Contains the business logic, agent definitions, and the LangGraph orchestrator.
-- **Models (`models/`)**: Contains the data access layer, including Vector Database interactions, semantic cache, and SQLite checkpointer memory.
-- **Views (`views/`)**: Presentation layer built using Streamlit.
+- **Agentic Workflow Engine**: Orchestrated by **LangGraph**, the system acts as a state machine that dynamically coordinates multiple specialized agents. The graph is lazily compiled and cached to ensure optimal execution speeds.
+- **Ultra-Fast Heuristic Routing**: Employs an ultra-fast, regex-based keyword matcher and language detector to route queries in sub-millisecond time, bypassing expensive LLM classification calls.
+- **Bilingual Interface**: Seamlessly detects whether the user is speaking Arabic or English and operates fluently in both, adapting both search mechanisms and synthesis language dynamically.
+- **RAG & Vector Retrieval**: Employs **ChromaDB** with advanced sentence transformers to securely search across base legal collections and user-uploaded legal PDFs.
+- **Optimized CPU Embeddings**: Uses HuggingFace's `mohamed2811/Muffakir_Embedding_V2` model, selected specifically for its superior performance on multilingual and Arabic legal text, running entirely locally on CPU.
+- **Multi-Level Semantic Caching**: Identifies previously answered concepts via vector similarity (`semantic_cache` collection). If a highly similar query exists, it bypasses LLM inference and instantly returns the cached response.
+- **Conversational Memory**: Utilizes `langgraph-checkpoint-sqlite` to persist state across conversational threads, allowing the assistant to remember context and answer follow-up questions accurately.
+- **Interactive Streamlit UI**: Provides a clean, responsive, and dark-themed chat interface. Heavy models and embeddings are preloaded on startup using Streamlit's caching mechanisms.
+- **Robust Ingestion Pipeline**: A dedicated `process.py` module to parse, clean, chunk (preserving RTL text properties), and index large Arabic legal PDFs. Uses MD5 hashing to skip unchanged files for rapid processing.
+
+---
+
+## ⚡ Performance & Latency Optimizations
+
+This application has been meticulously engineered to minimize latency and provide sub-second retrieval times:
+
+1. **Heuristic-First Pattern (Zero-LLM Retrieval)**: Replaced multiple LLM calls in the routing and parameter extraction phases with fast regex heuristics and local synonym dictionaries. LLM calls are reserved solely for the final answer synthesis (`ScribeAgent`).
+2. **Native DB Filtering**: Article-specific lookups leverage ChromaDB's native `where` metadata filters for `O(1)` direct lookups instead of doing expensive post-filtering on vector similarity results.
+3. **Fast Fallback Query Expansion**: Instead of using an LLM to reformulate poor queries during retries, the system utilizes a fast, local dictionary of Arabic/English legal synonyms to expand and refine queries instantly.
+4. **Graph Edge Pruning**: The LangGraph execution bypasses the Semantic Cache if the Router's confidence score is low, preventing unnecessary database hits.
+5. **Collection Caching**: ChromaDB collection instances (`legal_ar`, `semantic_cache`) are cached in memory as module-level singletons to prevent reloading the embedding model on every interaction.
+
+---
+
+## 🧠 System Architecture
 
 ### Multi-Agent Flow
 
 ![LangGraph Workflow Architecture](graph.png)
 
-The core of the application relies on specialized LangChain/LangGraph agents, forming a state machine defined in `controllers/graph.py`:
+The core application runs as a deterministic LangGraph state machine defined in `controllers/graph.py`:
 
-1. **RouterAgent**: The entry point of the graph. It classifies the user's query intent (e.g., legal question, general greeting, or out-of-domain) and detects the requested language.
-2. **CacheAgent**: Evaluates the Semantic Cache database for similar prior queries based on `SIMILARITY_THRESHOLD`. If a highly similar query exists, it bypasses the LLM and instantly returns the cached response. **Note:** Semantic cache evaluation is skipped if router confidence is < 0.8.
-3. **ResearcherAgent**: If the query requires new research, this agent constructs optimized search terms, queries ChromaDB, and extracts the top `TOP_K` relevant legal articles, laws, and precedents. **Retry Loop:** Features a maximum of 2 retrieval attempts; if the first attempt fails to retrieve sufficiently relevant context, the query is reformulated.
-4. **ScribeAgent**: The synthesizer. It takes the retrieved legal documents and drafts a formal, structured, and highly accurate response. It ensures the final output strictly matches the language and context requested by the user.
+1. **Router Node (`RouterAgent`)**: The entry point. Uses high-speed regex heuristics to classify the query's domain (legal vs. general greeting vs. out-of-domain) and detects the language.
+2. **Cache Node (`CacheAgent`)**: Evaluates the Semantic Cache database. If the query's similarity to a past query exceeds `SIMILARITY_THRESHOLD` (e.g., `0.80`), it instantly returns the cached response and halts graph execution.
+3. **Researcher Node (`ResearcherAgent`)**: If no cache hit, this agent takes over. 
+   - Uses regex to extract article numbers or identify if the query is general.
+   - Executes either a direct native `where` lookup (for specific articles) or an expanded semantic vector search.
+   - **Retry Loop**: If the search returns 0 documents, a conditional edge triggers a **Reformulate Node** that instantly substitutes synonyms and retries the search. Maximum 2 attempts.
+4. **Scribe Node (`ScribeAgent`)**: The synthesizer. It receives the retrieved legal documents, the conversation history, and the system prompts to draft a formal, accurate, and structured legal response via OpenRouter.
+
+### Model-View-Controller (MVC) Structure
+
+- **Controllers (`controllers/`)**: Business logic, Agent definitions (inheriting from `BaseAgent`), and LangGraph orchestrator.
+- **Models (`models/`)**: Data access layer (ChromaDB, Semantic Cache, SQLite Checkpointer, Document Processing).
+- **Views (`views/`)**: Presentation layer (Streamlit).
 
 ---
 
-## 📁 Project Structure
-
-The codebase is meticulously organized to adhere to the Model-View-Controller pattern:
+## 📁 Project Directory Structure
 
 ```text
 Project/
 ├── app.py                     # Main application entry point -> routes to Streamlit
-├── process.py                 # Document ingestion pipeline for PDFs
+├── process.py                 # Document ingestion pipeline for parsing PDFs to ChromaDB
 ├── requirements.txt           # Python dependencies
 ├── .env                       # Environment variables (API keys & Config)
 ├── PDF/                       # Directory for raw source PDF legal documents
@@ -61,17 +76,22 @@ Project/
 │   ├── checkpoints.db         # SQLite checkpointer for conversation memory
 │   └── processed/             # Extracted/chunked text + MD5 hashes from PDFs
 ├── models/                    # Data Layer
-│   ├── document_processor.py  # PDF text extraction and chunking logic
+│   ├── document_processor.py  # PDF text extraction and semantic chunking logic
 │   ├── vector_store.py        # ChromaDB setup, retrieval logic, and singleton caching
+│   ├── metadata_filtering.py  # Re-ranking and result filtering logic
+│   ├── query_expansion.py     # Fast local synonym and keyword expansion
 │   ├── semantic_cache.py      # Cache database integration
 │   └── memory.py              # SQLite checkpointer initialization
 ├── controllers/               # Business Logic and LLM Agents
 │   ├── base_agent.py          # Abstract BaseAgent class (OOP)
-│   ├── router.py              # RouterAgent implementation
-│   ├── cache_controller.py    # CacheAgent implementation
-│   ├── researcher.py          # ResearcherAgent implementation
-│   ├── scribe.py              # ScribeAgent implementation
-│   └── graph.py               # Orchestrates the agents into a LangGraph state machine
+│   ├── router.py              # Heuristic Router implementation
+│   ├── cache_controller.py    # Cache management node
+│   ├── researcher.py          # Retrieval orchestration node
+│   ├── scribe.py              # LLM Synthesis generation node
+│   ├── graph_nodes.py         # Node wrapper functions for LangGraph
+│   ├── graph_edges.py         # Conditional routing logic for graph state
+│   ├── graph_state.py         # TypedDict definition of the graph state
+│   └── graph.py               # Orchestrates the agents into the final LangGraph
 ├── utils/                     # Configuration and helper utilities
 │   └── config.py              # Centralized configuration and environment loading
 └── views/                     # Presentation Layer
@@ -80,24 +100,21 @@ Project/
 
 ---
 
-## ⚙️ Key Implementation Details
+## ⚙️ Technical Stack
 
-- **Dependencies & Models**:
-  - **LLM**: OpenRouter via `langchain_openai.ChatOpenAI` with `base_url="https://openrouter.ai/api/v1"`
-  - **Embeddings**: HuggingFace `mohamed2811/Muffakir_Embedding_V2` (Forced to CPU via `model_kwargs={"device": "cpu"}`)
-  - **Vector Store**: ChromaDB with singleton caching. Collection instances (`legal_ar`, `semantic_cache`) are cached at the module level to avoid reloading embeddings on every query.
-- **Ingestion Optimization (`process.py`)**: Skips unchanged PDFs by comparing MD5 hashes and batches ChromaDB writes (500 documents per batch) to drastically improve ingestion speed on subsequent runs.
-- **Agent Initialization**: Agents are initialized as singletons at the module level.
-- **Performance Characteristics**:
-  - The first query is typically slower due to lazy graph compilation.
-  - Re-running `process.py` on unchanged PDFs is extremely fast as extraction and ChromaDB writes are entirely skipped.
+- **LLM Provider**: [OpenRouter](https://openrouter.ai/) via `langchain_openai.ChatOpenAI`. Default Model: `openai/gpt-oss-20b:free`.
+- **Embedding Model**: `mohamed2811/Muffakir_Embedding_V2` (HuggingFace, Multilingual Arabic).
+- **Vector Database**: [ChromaDB](https://www.trychroma.com/).
+- **Orchestration**: [LangGraph](https://python.langchain.com/docs/langgraph) & LangChain Core.
+- **Frontend**: [Streamlit](https://streamlit.io/).
+- **PDF Processing**: `PyMuPDF` (fitz) with RTL/NFKC normalization for high-quality Arabic extraction.
 
 ---
 
 ## 🚀 Setup & Installation
 
 ### 1. Prerequisites
-Ensure you have Python 3.10+ installed. It is highly recommended to use a virtual environment to avoid dependency conflicts.
+Ensure you have **Python 3.10+** installed. It is highly recommended to use a virtual environment.
 
 ```bash
 # Create a Virtual Environment
@@ -111,7 +128,7 @@ source agents-env/bin/activate
 ```
 
 ### 2. Install Dependencies
-Install all required libraries:
+Install all required libraries from the `requirements.txt`:
 ```bash
 pip install -r requirements.txt
 ```
@@ -139,7 +156,7 @@ To populate the vector database with legal knowledge, place your source PDFs in 
 ```bash
 python process.py
 ```
-*Note: You can safely run this command multiple times. Unchanged PDFs will be skipped automatically.*
+*Note: You can safely run this command multiple times. It uses MD5 file hashing to skip unchanged PDFs automatically, saving processing time.*
 
 ### 5. Running the Assistant
 You can launch the complete pipeline and the Streamlit UI using the following commands:
