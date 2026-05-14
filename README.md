@@ -70,28 +70,32 @@ Project/
 ├── process.py                 # Document ingestion pipeline for parsing PDFs to ChromaDB
 ├── requirements.txt           # Python dependencies
 ├── .env                       # Environment variables (API keys & Config)
+├── AGENTS.md                  # Quick reference documentation for agents
 ├── PDF/                       # Directory for raw source PDF legal documents
 ├── data/                      # Local databases and temporary data
 │   ├── chroma_db/             # ChromaDB persistence directory
 │   ├── checkpoints.db         # SQLite checkpointer for conversation memory
 │   └── processed/             # Extracted/chunked text + MD5 hashes from PDFs
 ├── models/                    # Data Layer
-│   ├── document_processor.py  # PDF text extraction and semantic chunking logic
-│   ├── vector_store.py        # ChromaDB setup, retrieval logic, and singleton caching
-│   ├── metadata_filtering.py  # Re-ranking and result filtering logic
+│   ├── document_processor.py  # PDF text extraction and processing orchestration
+│   ├── memory.py              # SQLite checkpointer initialization
+│   ├── metadata_filtering.py  # Advanced filtering logic for ChromaDB
+│   ├── multi_level_cache.py   # Hierarchical caching mechanism
 │   ├── query_expansion.py     # Fast local synonym and keyword expansion
+│   ├── ranking_system.py      # Re-ranking and result scoring logic
 │   ├── semantic_cache.py      # Cache database integration
-│   └── memory.py              # SQLite checkpointer initialization
+│   ├── semantic_chunking.py   # Specialized chunking logic for Arabic text
+│   └── vector_store.py        # ChromaDB setup, retrieval logic, and singleton caching
 ├── controllers/               # Business Logic and LLM Agents
 │   ├── base_agent.py          # Abstract BaseAgent class (OOP)
-│   ├── router.py              # Heuristic Router implementation
-│   ├── cache_controller.py    # Cache management node
-│   ├── researcher.py          # Retrieval orchestration node
-│   ├── scribe.py              # LLM Synthesis generation node
-│   ├── graph_nodes.py         # Node wrapper functions for LangGraph
+│   ├── cache_controller.py    # Cache management logic
+│   ├── graph.py               # Orchestrates the agents into the final LangGraph
 │   ├── graph_edges.py         # Conditional routing logic for graph state
+│   ├── graph_nodes.py         # Node wrapper functions for LangGraph
 │   ├── graph_state.py         # TypedDict definition of the graph state
-│   └── graph.py               # Orchestrates the agents into the final LangGraph
+│   ├── researcher.py          # Retrieval orchestration node
+│   ├── router.py              # Heuristic Router implementation
+│   └── scribe.py              # LLM Synthesis generation node
 ├── utils/                     # Configuration and helper utilities
 │   └── config.py              # Centralized configuration and environment loading
 └── views/                     # Presentation Layer
