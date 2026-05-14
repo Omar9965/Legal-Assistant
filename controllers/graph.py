@@ -17,7 +17,6 @@ from controllers.graph_nodes import (
 from controllers.graph_edges import (
     is_legal_check, cache_hit_check, retrieval_quality_check
 )
-from IPython.display import display
 
 
 # ── Build the Graph ──────────────────────────────────────────────────────────

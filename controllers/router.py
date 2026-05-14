@@ -1,95 +1,138 @@
 """
 Router — Language detection and legal relevance classification.
 
-Acts as the gatekeeper: determines the user's language and whether the query
-is legal in nature before allowing further processing.
+Uses fast heuristic classification instead of an LLM call to eliminate
+the 2-5 second latency that the LLM-based router added per query.
 """
 
-import json
-from langchain_core.prompts import ChatPromptTemplate
-from utils.config import get_llm
+import re
 from controllers.base_agent import BaseAgent
 
 
-ROUTER_PROMPT = ChatPromptTemplate.from_messages([
-    ("system", """You are a legal query router. Your job is to:
-1. Detect the language of the user's query (Arabic or English).
-2. Determine if the query is related to law, legal matters, or the Egyptian Civil Code.
-3. Assess your confidence in the classification (high, medium, or low).
+# ── Keyword sets for fast classification ─────────────────────────────────────
 
-Respond in EXACTLY this JSON format (no markdown, no code blocks):
-{{"language": "ar" or "en", "is_legal": true or false, "reason": "brief explanation", "confidence": 0.0 to 1.0}}
+_AR_GREETINGS = {
+    "مرحبا", "أهلا", "السلام عليكم", "السلام عليكم ورحمة الله",
+    "اهلا", "هاي", "هلا", "صباح الخير", "مساء الخير", "مساء الورد",
+}
+_EN_GREETINGS = {
+    "hello", "hi", "hey", "hi there", "hello there",
+    "good morning", "good evening", "good afternoon", "greetings",
+}
 
-confidence guidelines:
-- high (0.8-1.0): Clear legal topic or clearly non-legal (greetings, weather, etc.)
-- medium (0.5-0.79): Ambiguous topics that might be related to law
-- low (0.0-0.49): Very unclear intent, requires more research
+_LEGAL_KEYWORDS_AR = [
+    "قانون", "مادة", "المادة", "مدني", "عقد", "عقود", "التزام", "التزامات",
+    "ملكية", "حيازة", "ميراث", "إرث", "وصية", "تركة", "تعويض", "مسؤولية",
+    "إثبات", "بينة", "شهادة", "دعوى", "محكمة", "قضاء", "حكم", "أحكام",
+    "جريمة", "عقوبة", "حق", "حقوق", "واجب", "شرط", "بطلان", "فسخ",
+    "إيجاب", "قبول", "تعاقد", "ضمان", "كفالة", "رهن", "دين", "دائن",
+    "مدين", "أجل", "تقادم", "نفاذ", "وكالة", "وكيل", "شفعة", "ارتفاق",
+    "أهلية", "شخصية", "ولاية", "وصاية", "قاصر", "زواج", "طلاق", "نفقة",
+    "حضانة", "نسب", "عقار", "إيجار", "مؤجر", "مستأجر", "بيع", "هبة",
+    "تجاري", "شركة", "إفلاس", "مشرع", "تشريع", "لائحة", "نظام",
+]
 
-Examples of LEGAL queries (high confidence):
-- "ما هي شروط صحة العقد؟" → {{"language": "ar", "is_legal": true, "reason": "Asks about contract validity conditions", "confidence": 0.95}}
-- "What are property rights?" → {{"language": "en", "is_legal": true, "reason": "Asks about legal property rights", "confidence": 0.9}}
+_LEGAL_KEYWORDS_EN = [
+    "law", "legal", "article", "civil", "code", "contract", "obligation",
+    "property", "inheritance", "evidence", "court", "judgment", "liability",
+    "compensation", "rights", "duty", "penalty", "crime", "void", "breach",
+    "guarantee", "mortgage", "debt", "creditor", "debtor", "statute",
+    "regulation", "legislation", "egyptian", "ownership", "possession",
+    "marriage", "divorce", "custody", "testament", "will", "lease",
+]
 
-Examples of Neutral queries:
-- "Hello"→ {{"language": "en", "is_legal": false, "reason": "Simple greeting", "confidence": 0.95}}
-- "مرحبا"→ {{"language": "ar", "is_legal": false, "reason": "Simple greeting", "confidence": 0.95}}
-
-Examples of NON-LEGAL queries:
-- "What's the weather today?" → {{"language": "en", "is_legal": false, "reason": "Weather is not legal topic", "confidence": 0.95}}
-- "اكتب لي قصيدة" → {{"language": "ar", "is_legal": false, "reason": "Poetry request is not legal", "confidence": 0.9}}
-- "How do I cook pasta?" → {{"language": "en", "is_legal": false, "reason": "Cooking is not legal", "confidence": 0.95}}
-
-Examples of Medium confidence:
-- "ما هو الحكم؟" → {{"language": "ar", "is_legal": true, "reason": "Could be legal ruling or court judgment, but unclear", "confidence": 0.6}}
-- "Tell me about the law" → {{"language": "en", "is_legal": true, "reason": "Vague but likely legal intent", "confidence": 0.65}}
-"""),
-    ("human", "{query}"),
-])
+_NON_LEGAL_KEYWORDS_AR = [
+    "طبخ", "وصفة", "طعام", "أكل", "رياضة", "كرة", "لعبة", "فيلم",
+    "أغنية", "موسيقى", "طقس", "جو", "برمجة", "كود", "قصيدة", "شعر",
+    "سفر", "رحلة", "فندق",
+]
+_NON_LEGAL_KEYWORDS_EN = [
+    "cook", "recipe", "food", "sport", "game", "movie", "song", "music",
+    "weather", "code", "program", "poem", "poetry", "travel", "hotel",
+]
 
 
 class RouterAgent(BaseAgent):
     """
-    Agent responsible for classifying query's language and determining
-    if the query is legal in nature.
+    Fast heuristic-based router — classifies language and legal relevance
+    in <1ms using keyword matching instead of an LLM call.
     """
-    
+
     def execute(self, query: str) -> dict:
         """
         Classify a user query for language and legal relevance.
-        
-        Args:
-            query: The user's input text.
-        
+
         Returns:
-            Dict with keys: language ("ar"/"en"), is_legal (bool), reason (str)
+            Dict with keys: language, is_legal, reason, confidence
         """
-        llm = get_llm()
-        chain = ROUTER_PROMPT | llm
+        language = self._detect_language(query)
+        is_greeting = self._is_greeting(query, language)
 
-        response = chain.invoke({"query": query})
-        response_text = response.content.strip()
+        if is_greeting:
+            return {
+                "language": language,
+                "is_legal": False,
+                "reason": "Greeting detected",
+                "confidence": 0.95,
+            }
 
-        # Parse the JSON response
-        try:
-            # Clean potential markdown code blocks
-            cleaned = response_text
-            if cleaned.startswith("```"):
-                cleaned = cleaned.split("\n", 1)[1]
-            if cleaned.endswith("```"):
-                cleaned = cleaned.rsplit("```", 1)[0]
-            cleaned = cleaned.strip()
-            
-            result = json.loads(cleaned)
-            return {
-                "language": result.get("language", "ar"),
-                "is_legal": result.get("is_legal", True),
-                "reason": result.get("reason", ""),
-                "confidence": float(result.get("confidence", 0.5)),
-            }
-        except (json.JSONDecodeError, KeyError, ValueError):
-            # Fallback: assume legal and medium confidence if parsing fails
-            return {
-                "language": "ar",
-                "is_legal": True,
-                "reason": "Router parse fallback — treating as legal query.",
-                "confidence": 0.5,
-            }
+        is_legal, confidence, reason = self._classify_legal(query, language)
+
+        return {
+            "language": language,
+            "is_legal": is_legal,
+            "reason": reason,
+            "confidence": confidence,
+        }
+
+    # ── Internal helpers ─────────────────────────────────────────────────
+
+    @staticmethod
+    def _detect_language(query: str) -> str:
+        """Detect language based on Unicode character ranges."""
+        arabic_chars = sum(1 for c in query if "\u0600" <= c <= "\u06FF")
+        latin_chars = sum(1 for c in query if "A" <= c <= "z")
+        return "ar" if arabic_chars >= latin_chars else "en"
+
+    @staticmethod
+    def _is_greeting(query: str, language: str) -> bool:
+        q = query.strip()
+        if language == "ar":
+            return any(g in q for g in _AR_GREETINGS)
+        return q.lower() in _EN_GREETINGS or any(
+            g in q.lower() for g in _EN_GREETINGS
+        )
+
+    @staticmethod
+    def _classify_legal(query: str, language: str) -> tuple:
+        """Return (is_legal, confidence, reason)."""
+        q_lower = query.lower()
+
+        if language == "ar":
+            legal_hits = sum(1 for kw in _LEGAL_KEYWORDS_AR if kw in query)
+            non_legal_hits = sum(1 for kw in _NON_LEGAL_KEYWORDS_AR if kw in query)
+        else:
+            legal_hits = sum(1 for kw in _LEGAL_KEYWORDS_EN if kw in q_lower)
+            non_legal_hits = sum(1 for kw in _NON_LEGAL_KEYWORDS_EN if kw in q_lower)
+
+        # Article number reference is a strong legal signal
+        has_article_ref = bool(
+            re.search(r"(?:مادة|مــادة|المادة)\s*[\(（]?\s*\d+", query)
+            or re.search(r"[Aa]rt(?:icle)?\.?\s*\d+", query)
+        )
+        if has_article_ref:
+            legal_hits += 3
+
+        if legal_hits > 0 and non_legal_hits == 0:
+            confidence = min(0.95, 0.7 + legal_hits * 0.05)
+            return True, confidence, f"Legal keywords matched ({legal_hits})"
+        elif non_legal_hits > 0 and legal_hits == 0:
+            confidence = min(0.95, 0.7 + non_legal_hits * 0.05)
+            return False, confidence, f"Non-legal keywords matched ({non_legal_hits})"
+        elif legal_hits > non_legal_hits:
+            return True, 0.65, "Mixed signals, leaning legal"
+        elif non_legal_hits > legal_hits:
+            return False, 0.65, "Mixed signals, leaning non-legal"
+        else:
+            # No keywords matched — default to legal (benefit of the doubt)
+            return True, 0.5, "No strong signals, defaulting to legal"
