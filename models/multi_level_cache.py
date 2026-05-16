@@ -156,7 +156,7 @@ class ExactQueryCache:
 
 
 class ArticleLookupCache:
-    """Level 3: Fast lookup for specific article numbers."""
+    """Level 2: Fast lookup for specific article numbers."""
     
     def __init__(self, max_size: int = 500):
         self._cache: Dict[str, CacheEntry] = {}
@@ -201,7 +201,7 @@ class ArticleLookupCache:
 
 
 class ResultCache:
-    """Level 4: Cache for frequent search results."""
+    """Level 3: Cache for frequent search results."""
     
     def __init__(self, max_size: int = 500):
         self._cache: OrderedDict[str, CacheEntry] = OrderedDict()
