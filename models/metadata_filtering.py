@@ -218,10 +218,11 @@ class RelevanceScorer:
             semantic_score = self._calculate_semantic_score(doc, query, language)
             category_score = self._calculate_category_score(doc, query, language)
             
-            # Combine scores with weights
+            # Combine scores: embedding similarity is the primary signal,
+            # category alignment is a secondary metadata bonus.
             total_score = (
-                semantic_score * 0.55 +
-                category_score * 0.45
+                semantic_score * 0.7 +
+                category_score * 0.3
             )
             
             scored_docs.append((doc, total_score))
@@ -240,17 +241,26 @@ class RelevanceScorer:
         return doc.metadata.get("relevance_score", 0.5)
     
     def _calculate_category_score(self, doc: Document, query: str, language: str) -> float:
-        """Calculate category relevance score."""
+        """Score based on whether the document's legal category matches the query's topic.
+
+        Uses detect_category_from_query (keyword heuristic) for the query side,
+        then checks alignment with the document's pre-assigned category metadata.
+        Returns 1.0 for a match, 0.3 for general/unknown categories (benefit of
+        the doubt), and 0.0 for a definite mismatch.
+        """
         doc_category = doc.metadata.get("category", "general")
+        query_category = detect_category_from_query(query, language)
         
-        # Check if query contains category keywords
-        category_keywords = LEGAL_CATEGORIES
+        if not query_category:
+            # No category detected in query — don't penalize any document
+            return 0.5
         
-        for category, keywords in category_keywords.items():
-            if category == doc_category:
-                for keyword in keywords:
-                    if keyword in query.lower():
-                        return 1.0
+        if doc_category == query_category:
+            return 1.0
+        
+        if doc_category == "general":
+            # Generic docs might still be relevant
+            return 0.3
         
         return 0.0
 
