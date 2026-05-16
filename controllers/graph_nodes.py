@@ -5,6 +5,7 @@ from controllers.researcher import ResearcherAgent
 from controllers.scribe import ScribeAgent
 from models.query_expansion import _fallback_expansions
 from utils.constants import AR_GREETINGS, EN_GREETINGS
+from utils.config import SIMILARITY_THRESHOLD
 
 router_agent = RouterAgent()
 cache_agent = CacheAgent()
@@ -81,7 +82,7 @@ def cache_node(state: AgentState) -> dict:
     router_confidence = state.get("router_confidence", 1.0)
     
     # Skip cache for uncertain queries
-    if router_confidence < 0.8:
+    if router_confidence < SIMILARITY_THRESHOLD:
         hit_status = "SKIP (low confidence)"
         trace_entry = f"[Cache] {hit_status} | Router confidence: {router_confidence:.2f}"
         debug_trace = state.get("debug_trace", []) + [trace_entry]
