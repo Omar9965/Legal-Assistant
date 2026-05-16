@@ -217,15 +217,11 @@ class RelevanceScorer:
             # Calculate multiple scores
             semantic_score = self._calculate_semantic_score(doc, query, language)
             category_score = self._calculate_category_score(doc, query, language)
-            position_score = self._calculate_position_score(doc)
-            recency_score = self._calculate_recency_score(doc)
             
             # Combine scores with weights
             total_score = (
-                semantic_score * 0.4 +
-                category_score * 0.3 +
-                position_score * 0.2 +
-                recency_score * 0.1
+                semantic_score * 0.55 +
+                category_score * 0.45
             )
             
             scored_docs.append((doc, total_score))
@@ -235,19 +231,13 @@ class RelevanceScorer:
         return scored_docs
     
     def _calculate_semantic_score(self, doc: Document, query: str, language: str) -> float:
-        """Calculate semantic relevance score."""
-        # This is a simplified version - in practice, you'd use embeddings
-        doc_text = doc.page_content.lower()
-        query_words = query.lower().split()
-        
-        # Count query word matches
-        matches = sum(1 for word in query_words if word in doc_text)
-        
-        # Normalize by query length
-        if len(query_words) == 0:
-            return 0.0
-        
-        return min(1.0, matches / len(query_words))
+        """Use the embedding-based relevance score computed during vector search.
+
+        The score is attached to doc.metadata['relevance_score'] by
+        vector_store.search() using the Muffakir embedding model.
+        Falls back to 0.5 if the score is missing (e.g., manually created docs).
+        """
+        return doc.metadata.get("relevance_score", 0.5)
     
     def _calculate_category_score(self, doc: Document, query: str, language: str) -> float:
         """Calculate category relevance score."""
@@ -263,36 +253,12 @@ class RelevanceScorer:
                         return 1.0
         
         return 0.0
-    
-    def _calculate_position_score(self, doc: Document) -> float:
-        """Calculate position-based score (earlier chunks get higher scores)."""
-        chunk_index = doc.metadata.get("chunk_index", 0)
-        sub_chunk_index = doc.metadata.get("sub_chunk_index", 0)
-        
-        # Earlier positions get higher scores
-        position_score = 1.0 / (1 + chunk_index + sub_chunk_index * 0.1)
-        return position_score
-    
-    def _calculate_recency_score(self, doc: Document) -> float:
-        """Calculate recency-based score (if page number is available)."""
-        page_num = doc.metadata.get("page_number")
-        if not page_num:
-            return 0.5  # Default score for documents without page info
-        
-        try:
-            page_int = int(page_num)
-            # Assume higher page numbers are newer (this may need adjustment)
-            return min(1.0, page_int / 1000)  # Normalize to 0-1
-        except ValueError:
-            return 0.5
+
+
 
 
 def create_query_filters(query: str, language: str = "ar") -> List[FilterCriteria]:
     """Create filter criteria based on query analysis.
-    
-    Note: Language filter is intentionally omitted because the corpus is
-    entirely Arabic. Filtering by the user's query language would exclude
-    all documents when the user writes in English.
     """
     
     filters = []

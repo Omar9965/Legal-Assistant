@@ -75,8 +75,17 @@ def search(
     if filter_dict:
         kwargs["filter"] = filter_dict
 
-    results = collection.similarity_search(query, **kwargs)
-    return results
+    results_with_scores = collection.similarity_search_with_score(query, **kwargs)
+
+    # Attach the embedding-based similarity score to each document's metadata.
+    # ChromaDB returns a distance (lower = more similar); convert to 0-1 similarity.
+    documents = []
+    for doc, distance in results_with_scores:
+        distance = max(0.0, distance)
+        doc.metadata["relevance_score"] = max(0.0, 1.0 - (distance / 2.0))
+        documents.append(doc)
+
+    return documents
 
 
 def delete_documents_by_source(source: str, collection_name: str = LEGAL_AR_COLLECTION) -> None:
