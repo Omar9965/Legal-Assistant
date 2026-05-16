@@ -79,6 +79,28 @@ def search(
     return results
 
 
+def delete_documents_by_source(source: str, collection_name: str = LEGAL_AR_COLLECTION) -> None:
+    """
+    Delete all documents with the given source filename from a collection.
+
+    Used for incremental re-ingestion: removes only one PDF's chunks
+    instead of clearing the entire collection.
+
+    Args:
+        source: The source filename to match (e.g., "law-131-1948.pdf").
+        collection_name: Target collection name.
+    """
+    client = _get_chroma_client()
+    try:
+        col = client.get_collection(collection_name)
+        col.delete(where={"source": source})
+        print(f"[VectorStore] Deleted documents with source='{source}' from '{collection_name}'.")
+    except Exception as e:
+        print(f"[VectorStore] Could not delete by source '{source}': {e}")
+    # Invalidate cache so subsequent writes use a fresh wrapper
+    reset_collection_cache(collection_name)
+
+
 def clear_collection(collection_name: str) -> None:
     """Delete all documents in a collection (for re-ingestion)."""
     client = _get_chroma_client()

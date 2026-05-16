@@ -25,6 +25,7 @@ SCRIBE_PROMPT_AR = ChatPromptTemplate.from_messages([
 
 ## سياق الجودة:
 - عدد الوثائق المستردة: {num_docs}
+- أقصى درجة ملاءمة: {max_relevance}
 - إذا كان max_relevance < 0.5، أشر إلى أن الإجابة قد تكون غير كاملة أو غير دقيقة.
 
 ## السياق القانوني:

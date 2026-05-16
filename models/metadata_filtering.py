@@ -15,6 +15,7 @@ import re
 from dataclasses import dataclass
 from enum import Enum
 from models.document_processor import extract_article_number
+from utils.constants import LEGAL_CATEGORIES
 
 
 class FilterType(Enum):
@@ -39,17 +40,7 @@ class MetadataFilter:
     """Advanced metadata filtering for legal documents."""
     
     def __init__(self):
-        # Legal category definitions
-        self.category_keywords = {
-            "contracts": ["عقد", "عقود", "تعاقد", "إيجاب", "قبول", "اتفاقية"],
-            "obligations": ["التزام", "التزامات", "مسؤولية", "تعويض", "دين"],
-            "property": ["ملكية", "حيازة", "عقار", "ارتفاق", "أرض", "مبنى"],
-            "inheritance": ["ميراث", "إرث", "وصية", "تركة", "وارث"],
-            "evidence": ["إثبات", "بينة", "شهادة", "دليل", "برهان"],
-            "persons": ["أهلية", "شخصية", "ولاية", "وصاية", "قاصر"],
-            "family": ["زواج", "طلاق", "نفقة", "حضانة", "نسب"],
-            "procedural": ["دعوى", "محكمة", "قضاء", "تنفيذ", "حجز"],
-        }
+        self.category_keywords = LEGAL_CATEGORIES
     
     def apply_filters(
         self, 
@@ -263,14 +254,7 @@ class RelevanceScorer:
         doc_category = doc.metadata.get("category", "general")
         
         # Check if query contains category keywords
-        category_keywords = {
-            "contracts": ["عقد", "عقود", "تعاقد"],
-            "obligations": ["التزام", "مسؤولية", "تعويض"],
-            "property": ["ملكية", "عقار", "حيازة"],
-            "inheritance": ["ميراث", "إرث", "وصية"],
-            "evidence": ["إثبات", "بينة", "شهادة"],
-            "persons": ["أهلية", "شخصية", "ولاية"],
-        }
+        category_keywords = LEGAL_CATEGORIES
         
         for category, keywords in category_keywords.items():
             if category == doc_category:
@@ -342,14 +326,7 @@ def create_query_filters(query: str, language: str = "ar") -> List[FilterCriteri
 
 def detect_category_from_query(query: str, language: str = "ar") -> Optional[str]:
     """Detect legal category from query."""
-    categories = {
-        "contracts": ["عقد", "عقود", "تعاقد", "إيجاب", "قبول", "اتفاقية"],
-        "obligations": ["التزام", "التزامات", "مسؤولية", "تعويض", "دين"],
-        "property": ["ملكية", "حيازة", "عقار", "ارتفاق", "أرض", "مبنى"],
-        "inheritance": ["ميراث", "إرث", "وصية", "تركة", "وارث"],
-        "evidence": ["إثبات", "بينة", "شهادة", "دليل", "برهان"],
-        "persons": ["أهلية", "شخصية", "ولاية", "وصاية", "قاصر"],
-    }
+    categories = LEGAL_CATEGORIES
     
     for category, keywords in categories.items():
         for keyword in keywords:

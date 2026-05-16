@@ -12,7 +12,9 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from models.document_processor import process_pdf, _compute_file_hash
-from models.vector_store import add_documents, clear_collection, get_collection_count
+from models.vector_store import (
+    add_documents, delete_documents_by_source, get_collection_count
+)
 from utils.config import PDF_DIR, LEGAL_AR_COLLECTION, PROCESSED_DIR
 
 BATCH_SIZE = 500
@@ -85,15 +87,21 @@ def main():
         print("=" * 60)
         return
 
-    print(f"\n{len(changed_pdfs)} PDF(s) have changed. Processing...")
+    print(f"\n{len(changed_pdfs)} PDF(s) have changed. Processing incrementally...")
     
-    print(f"\nClearing '{LEGAL_AR_COLLECTION}' collection...")
-    clear_collection(LEGAL_AR_COLLECTION)
     
-    print(f"\nExtracting PDFs in parallel ({MAX_WORKERS} workers)...")
+    for pdf_file in changed_pdfs:
+        print(f"  Removing old chunks for '{pdf_file}'...")
+        delete_documents_by_source(pdf_file, LEGAL_AR_COLLECTION)
+    
+
+    print(f"\nExtracting changed PDFs in parallel ({MAX_WORKERS} workers)...")
     all_documents = []
     with ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {executor.submit(_process_single_pdf_worker, pdf): pdf for pdf in pdf_files}
+        futures = {
+            executor.submit(_process_single_pdf_worker, pdf): pdf
+            for pdf in changed_pdfs
+        }
         for future in as_completed(futures):
             pdf_file, documents, elapsed, error = future.result()
             if error:
@@ -126,3 +134,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

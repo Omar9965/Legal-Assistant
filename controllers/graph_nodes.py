@@ -4,6 +4,7 @@ from controllers.cache_controller import CacheAgent
 from controllers.researcher import ResearcherAgent
 from controllers.scribe import ScribeAgent
 from models.query_expansion import _fallback_expansions
+from utils.constants import AR_GREETINGS, EN_GREETINGS
 
 router_agent = RouterAgent()
 cache_agent = CacheAgent()
@@ -31,14 +32,11 @@ def decline_node(state: AgentState) -> dict:
     language = state.get("language", "ar")
     query = state.get("query", "")
 
-    ar_greetings = {"مرحبا", "أهلا", "السلام عليكم", "السلام عليكم ورحمة الله", "اهلا", "هاي", "هلا", "صباح الخير", "مساء الخير", "مساء الورد"}
-    en_greetings = {"hello", "hi", "hey", "hi there", "hello there", "good morning", "good evening", "good afternoon", "greetings"}
-
     greeting_found = False
     if language == "ar":
-        greeting_found = any(g in query for g in ar_greetings)
+        greeting_found = any(g in query for g in AR_GREETINGS)
     else:
-        greeting_found = any(g.lower() in query.lower() for g in en_greetings)
+        greeting_found = any(g.lower() in query.lower() for g in EN_GREETINGS)
 
     if greeting_found:
         if language == "ar":

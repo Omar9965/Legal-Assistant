@@ -32,8 +32,8 @@ PROCESSED_DIR = os.path.join(BASE_DIR, "data", "processed")
 PDF_DIR = os.path.join(BASE_DIR, "PDF")
 
 # ── Retrieval Settings ────────────────────────────────────────────────────────
-SIMILARITY_THRESHOLD = float(os.getenv("SIMILARITY_THRESHOLD"))
-TOP_K = int(os.getenv("TOP_K"))
+SIMILARITY_THRESHOLD = float(os.getenv("SIMILARITY_THRESHOLD", "0.80"))
+TOP_K = int(os.getenv("TOP_K", "5"))
 EMBEDDING_DEVICE = os.getenv("EMBEDDING_DEVICE", "cpu")
 
 # ── Collection Names ──────────────────────────────────────────────────────────

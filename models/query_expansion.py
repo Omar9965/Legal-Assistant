@@ -76,56 +76,30 @@ def _fallback_expansions(query: str, language: str) -> List[str]:
                         expansions.append(expansion)
     
     if "مادة" in query or "article" in query.lower():
-        expansions.extend([
-            f"تفاصيل {query}",
-            f"شرح {query}",
-            f"أحكام {query}",
-        ])
+        if language == "ar":
+            expansions.extend([
+                f"تفاصيل {query}",
+                f"شرح {query}",
+                f"أحكام {query}",
+            ])
+        else:
+            expansions.extend([
+                f"details of {query}",
+                f"explain {query}",
+                f"provisions of {query}",
+            ])
     else:
-        expansions.extend([
-            f"قانون {query}",
-            f"المادة المتعلقة ب {query}",
-            f"ما هي أحكام {query}",
-        ])
+        if language == "ar":
+            expansions.extend([
+                f"قانون {query}",
+                f"المادة المتعلقة ب {query}",
+                f"ما هي أحكام {query}",
+            ])
+        else:
+            expansions.extend([
+                f"law about {query}",
+                f"article related to {query}",
+                f"what are the provisions of {query}",
+            ])
     
     return expansions[:3]
-
-
-def expand_with_legal_terms(query: str, language: str = "ar") -> str:
-    """Expand query with relevant legal terminology."""
-    legal_terms = {
-        "ar": ["قانوني", "مدني", "عقاري", "تجاري", "جنائي", "إداري"],
-        "en": ["legal", "civil", "property", "commercial", "criminal", "administrative"],
-    }
-    
-    terms = legal_terms.get(language, [])
-    
-    for term in terms:
-        if term not in query.lower():
-            return f"{query} {term}"
-    
-    return query
-
-
-def decompose_complex_query(query: str, language: str = "ar") -> List[str]:
-    """Decompose complex queries into simpler components."""
-    complex_indicators = {
-        "ar": ["و", "مع", "إضافة إلى", "بالإضافة إلى", "فضلا عن"],
-        "en": ["and", "with", "in addition to", "plus", "as well as"],
-    }
-    
-    indicators = complex_indicators.get(language, [])
-    
-    decomposed = []
-    
-    for indicator in indicators:
-        if indicator in query:
-            parts = query.split(indicator)
-            for part in parts:
-                part = part.strip()
-                if part and len(part) > 5:
-                    decomposed.append(part)
-    
-    decomposed.append(query)
-    
-    return decomposed

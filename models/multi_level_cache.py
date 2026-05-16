@@ -264,12 +264,11 @@ class MultiLevelCache:
         self._exact_cache = ExactQueryCache()
         self._article_cache = ArticleLookupCache()
         self._result_cache = ResultCache()
-        self._lock = Lock()
         self._enabled = {
             "exact": True,
             "semantic": True,
             "article": True,
-            "result": False  # Disabled by default
+            "result": False  
         }
     
     def lookup(self, query: str) -> Tuple[Optional[str], float, str]:

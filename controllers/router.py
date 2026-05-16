@@ -7,18 +7,7 @@ the 2-5 second latency that the LLM-based router added per query.
 
 import re
 from controllers.base_agent import BaseAgent
-
-
-# ── Keyword sets for fast classification ─────────────────────────────────────
-
-_AR_GREETINGS = {
-    "مرحبا", "أهلا", "السلام عليكم", "السلام عليكم ورحمة الله",
-    "اهلا", "هاي", "هلا", "صباح الخير", "مساء الخير", "مساء الورد",
-}
-_EN_GREETINGS = {
-    "hello", "hi", "hey", "hi there", "hello there",
-    "good morning", "good evening", "good afternoon", "greetings",
-}
+from utils.constants import AR_GREETINGS, EN_GREETINGS
 
 _LEGAL_KEYWORDS_AR = [
     "قانون", "مادة", "المادة", "مدني", "عقد", "عقود", "التزام", "التزامات",
@@ -91,16 +80,16 @@ class RouterAgent(BaseAgent):
     def _detect_language(query: str) -> str:
         """Detect language based on Unicode character ranges."""
         arabic_chars = sum(1 for c in query if "\u0600" <= c <= "\u06FF")
-        latin_chars = sum(1 for c in query if "A" <= c <= "z")
+        latin_chars = sum(1 for c in query if c.isascii() and c.isalpha())
         return "ar" if arabic_chars >= latin_chars else "en"
 
     @staticmethod
     def _is_greeting(query: str, language: str) -> bool:
         q = query.strip()
         if language == "ar":
-            return any(g in q for g in _AR_GREETINGS)
-        return q.lower() in _EN_GREETINGS or any(
-            g in q.lower() for g in _EN_GREETINGS
+            return any(g in q for g in AR_GREETINGS)
+        return q.lower() in EN_GREETINGS or any(
+            g in q.lower() for g in EN_GREETINGS
         )
 
     @staticmethod

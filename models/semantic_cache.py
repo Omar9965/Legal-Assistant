@@ -120,9 +120,11 @@ def store(query: str, answer: str, metadata: dict = None) -> None:
 
 def clear_cache() -> None:
     """Clear all entries in the semantic cache."""
+    global _cache_collection_cache
     client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
     try:
         client.delete_collection(SEMANTIC_CACHE_COLLECTION)
         print("[SemanticCache] Cache cleared.")
     except Exception:
         print("[SemanticCache] Cache was already empty.")
+    _cache_collection_cache = None

@@ -12,6 +12,7 @@ import unicodedata
 from typing import Optional
 import fitz
 from langchain_core.documents import Document
+from utils.constants import LEGAL_CATEGORIES
 
 
 
@@ -159,7 +160,6 @@ def _clean_text(text: str) -> str:
 def extract_article_number(text: str) -> Optional[str]:
     patterns = [
         r"(?:مادة|مــادة|المادة)\s*[\(（]?\s*(\d+)\s*[\)）]?",
-        r"(?:مادة|مــادة|المادة)\s*[\(（]?\s*([0-9]+)\s*[\)）]?",
         r"[Aa]rt(?:icle)?\.?\s*(\d+)",
     ]
     for pat in patterns:
@@ -175,15 +175,7 @@ def _detect_category(text: str) -> str:
     a keyword embedded inside a longer word does not cause a false positive.
     Category order defines priority when multiple categories match.
     """
-    categories: dict[str, list[str]] = {
-        "contracts":   ["عقد", "عقود", "تعاقد", "إيجاب", "قبول"],
-        "obligations": ["التزام", "التزامات", "مسؤولية", "تعويض"],
-        "property":    ["ملكية", "حيازة", "عقار", "ارتفاق"],
-        "inheritance": ["ميراث", "إرث", "وصية", "تركة"],
-        "evidence":    ["إثبات", "بينة", "شهادة"],
-        "persons":     ["أهلية", "شخصية", "ولاية", "وصاية"],
-    }
-    for category, keywords in categories.items():
+    for category, keywords in LEGAL_CATEGORIES.items():
         for kw in keywords:
             if re.search(rf"(?<!\w){re.escape(kw)}(?!\w)", text):
                 return category
