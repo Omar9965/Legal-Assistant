@@ -12,10 +12,8 @@ def retrieval_quality_check(state: AgentState) -> str:
     """Check if retrieval quality needs retry."""
     quality = state.get("last_retrieval_quality", "success")
     attempts = state.get("retrieval_attempts", 1)
-    
-    # Retry if insufficient and hasn't exceeded max attempts
-    if quality == "insufficient" and attempts < 2:
-        return "retry"
-    elif quality == "empty" and attempts < 2:
+
+    # Retry if insufficient or empty, within the max attempts budget
+    if quality in ("insufficient", "empty") and attempts < 2:
         return "retry"
     return "proceed"

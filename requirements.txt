@@ -1,15 +1,10 @@
 langgraph
 langchain
-langchain-community
 langchain-chroma
 langchain-huggingface
-PyMuPDF
+langchain-openai
 chromadb
 sentence-transformers
+PyMuPDF
 streamlit
 python-dotenv
-pydantic
-pandas
-tqdm
-langgraph-checkpoint-sqlite
-langchain-openai

@@ -12,7 +12,7 @@ import unicodedata
 from typing import Optional
 import fitz
 from langchain_core.documents import Document
-from utils.constants import LEGAL_CATEGORIES
+from utils.constants import LEGAL_CATEGORIES, ARTICLE_MARKERS, ARTICLE_NUM, ARTICLE_PATTERNS
 
 
 
@@ -25,11 +25,34 @@ def _compute_file_hash(file_path: str) -> str:
     return h.hexdigest()
 
 
+def _processed_paths(pdf_path: str, processed_dir: str) -> tuple[str, str]:
+    """Return (extracted_text_path, hash_path) for a given PDF."""
+    base_name = os.path.splitext(os.path.basename(pdf_path))[0]
+    md_path = os.path.join(processed_dir, f"{base_name}.md")
+    hash_path = os.path.join(processed_dir, f"{base_name}.md.hash")
+    return md_path, hash_path
+
+
+def is_unchanged(pdf_path: str, processed_dir: str = ".") -> bool:
+    """True if the extracted text + hash on disk match the current PDF bytes.
+
+    Single source of truth for the MD5 skip logic — used both by the
+    extraction pipeline and by the ingestion script's change detection.
+    """
+    md_path, hash_path = _processed_paths(pdf_path, processed_dir)
+    if not (os.path.exists(md_path) and os.path.exists(hash_path)):
+        return False
+    try:
+        with open(hash_path, "r", encoding="utf-8") as hf:
+            return hf.read().strip() == _compute_file_hash(pdf_path)
+    except OSError:
+        return False
+
+
 # ── PDF Extraction ───────────────────────────────────────────────────────────
 
 def process_pdf_with_pymupdf(
     pdf_path: str,
-    save_text: bool = True,
     processed_dir: str = ".",
 ) -> str:
     """
@@ -38,23 +61,17 @@ def process_pdf_with_pymupdf(
     KEY FIX: sort=False preserves RTL reading order.
     sort=True reorders spans by x/y position which reverses Arabic words.
 
+    Change detection is done upstream (process.py / is_unchanged); this
+    function always extracts and overwrites the cached text on success.
+
     Page numbers are embedded as sentinels so downstream code can track
     which page each article came from.
     """
-    base_name = os.path.splitext(os.path.basename(pdf_path))[0]
-    md_path   = os.path.join(processed_dir, f"{base_name}.md")
-    hash_path = os.path.join(processed_dir, f"{base_name}.md.hash")
-
-    current_hash = _compute_file_hash(pdf_path)
-
-    if os.path.exists(md_path) and os.path.exists(hash_path):
-        with open(hash_path, "r", encoding="utf-8") as hf:
-            if hf.read().strip() == current_hash:
-                print(f"[Cache hit] '{base_name}' — skipping extraction.")
-                with open(md_path, "r", encoding="utf-8") as mf:
-                    return mf.read()
+    md_path, hash_path = _processed_paths(pdf_path, processed_dir)
+    base_name = os.path.basename(pdf_path)
 
     print(f"[Extracting] '{base_name}'...")
+    current_hash = _compute_file_hash(pdf_path)
     doc = fitz.open(pdf_path)
     pages_text: list[str] = []
 
@@ -77,13 +94,12 @@ def process_pdf_with_pymupdf(
     # Clean up excessive whitespace while preserving structure
     full_text = _clean_text(full_text)
 
-    if save_text:
-        os.makedirs(processed_dir, exist_ok=True)
-        with open(md_path, "w", encoding="utf-8") as f:
-            f.write(full_text)
-        with open(hash_path, "w", encoding="utf-8") as hf:
-            hf.write(current_hash)
-        print(f"[Saved] → {md_path}")
+    os.makedirs(processed_dir, exist_ok=True)
+    with open(md_path, "w", encoding="utf-8") as f:
+        f.write(full_text)
+    with open(hash_path, "w", encoding="utf-8") as hf:
+        hf.write(current_hash)
+    print(f"[Saved] → {md_path}")
 
     return full_text
 
@@ -104,7 +120,7 @@ def _clean_text(text: str) -> str:
     # Patterns that always start a new block — never merge into previous line
     _NEW_BLOCK = re.compile(
         r"^(?:"
-        r"مادة|مــادة|المادة"
+        + ARTICLE_MARKERS +
         r"|الفصل|الباب|الكتاب|القسم"
         r"|أولاً|ثانياً|ثالثاً|رابعاً|خامساً"
         r"|سادساً|سابعاً|ثامناً|تاسعاً|عاشراً"
@@ -158,11 +174,7 @@ def _clean_text(text: str) -> str:
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 def extract_article_number(text: str) -> Optional[str]:
-    patterns = [
-        r"(?:مادة|مــادة|المادة)\s*[\(（]?\s*(\d+)\s*[\)）]?",
-        r"[Aa]rt(?:icle)?\.?\s*(\d+)",
-    ]
-    for pat in patterns:
+    for pat in ARTICLE_PATTERNS:
         m = re.search(pat, text)
         if m:
             return m.group(1)
@@ -233,7 +245,7 @@ def chunk_legal_text(
         sub_chunk_index — split index when an article exceeds chunk_size (int)
     """
     documents: list[Document] = []
-    article_pattern = r"(?=(?:مادة|مــادة|المادة)\s*[\(（]?\s*(?:\d+|[٠-٩]+)\s*[\)）]?)"
+    article_pattern = rf"(?=(?:{ARTICLE_MARKERS})\s*[\(（]?\s*{ARTICLE_NUM}\s*[\)）]?)"
     parts = re.split(article_pattern, text)
 
     def _make_doc(content: str, chunk_idx: int, sub_idx: int) -> Document:

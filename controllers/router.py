@@ -3,45 +3,23 @@ Router — Language detection and legal relevance classification.
 
 Uses fast heuristic classification instead of an LLM call to eliminate
 the 2-5 second latency that the LLM-based router added per query.
+Greeting detection matches whole phrases / short token-only messages —
+never substrings (so "hi" inside "this" no longer misclassifies queries).
 """
 
 import re
-from controllers.base_agent import BaseAgent
-from utils.constants import AR_GREETINGS, EN_GREETINGS
-
-_LEGAL_KEYWORDS_AR = [
-    "قانون", "مادة", "المادة", "مدني", "عقد", "عقود", "التزام", "التزامات",
-    "ملكية", "حيازة", "ميراث", "إرث", "وصية", "تركة", "تعويض", "مسؤولية",
-    "إثبات", "بينة", "شهادة", "دعوى", "محكمة", "قضاء", "حكم", "أحكام",
-    "جريمة", "عقوبة", "حق", "حقوق", "واجب", "شرط", "بطلان", "فسخ",
-    "إيجاب", "قبول", "تعاقد", "ضمان", "كفالة", "رهن", "دين", "دائن",
-    "مدين", "أجل", "تقادم", "نفاذ", "وكالة", "وكيل", "شفعة", "ارتفاق",
-    "أهلية", "شخصية", "ولاية", "وصاية", "قاصر", "زواج", "طلاق", "نفقة",
-    "حضانة", "نسب", "عقار", "إيجار", "مؤجر", "مستأجر", "بيع", "هبة",
-    "تجاري", "شركة", "إفلاس", "مشرع", "تشريع", "لائحة", "نظام",
-]
-
-_LEGAL_KEYWORDS_EN = [
-    "law", "legal", "article", "civil", "code", "contract", "obligation",
-    "property", "inheritance", "evidence", "court", "judgment", "liability",
-    "compensation", "rights", "duty", "penalty", "crime", "void", "breach",
-    "guarantee", "mortgage", "debt", "creditor", "debtor", "statute",
-    "regulation", "legislation", "egyptian", "ownership", "possession",
-    "marriage", "divorce", "custody", "testament", "will", "lease",
-]
-
-_NON_LEGAL_KEYWORDS_AR = [
-    "طبخ", "وصفة", "طعام", "أكل", "رياضة", "كرة", "لعبة", "فيلم",
-    "أغنية", "موسيقى", "طقس", "جو", "برمجة", "كود", "قصيدة", "شعر",
-    "سفر", "رحلة", "فندق",
-]
-_NON_LEGAL_KEYWORDS_EN = [
-    "cook", "recipe", "food", "sport", "game", "movie", "song", "music",
-    "weather", "code", "program", "poem", "poetry", "travel", "hotel",
-]
+from utils.constants import (
+    LEGAL_KEYWORDS_AR,
+    LEGAL_KEYWORDS_EN,
+    NON_LEGAL_KEYWORDS_AR,
+    NON_LEGAL_KEYWORDS_EN,
+    ARTICLE_PATTERNS,
+    greeting_phrases,
+    greeting_tokens,
+)
 
 
-class RouterAgent(BaseAgent):
+class RouterAgent:
     """
     Fast heuristic-based router — classifies language and legal relevance
     in <1ms using keyword matching instead of an LLM call.
@@ -52,7 +30,7 @@ class RouterAgent(BaseAgent):
         Classify a user query for language and legal relevance.
 
         Returns:
-            Dict with keys: language, is_legal, reason, confidence
+            Dict with keys: language, is_legal, is_greeting, reason, confidence
         """
         language = self._detect_language(query)
         is_greeting = self._is_greeting(query, language)
@@ -61,6 +39,7 @@ class RouterAgent(BaseAgent):
             return {
                 "language": language,
                 "is_legal": False,
+                "is_greeting": True,
                 "reason": "Greeting detected",
                 "confidence": 0.95,
             }
@@ -70,6 +49,7 @@ class RouterAgent(BaseAgent):
         return {
             "language": language,
             "is_legal": is_legal,
+            "is_greeting": False,
             "reason": reason,
             "confidence": confidence,
         }
@@ -85,12 +65,20 @@ class RouterAgent(BaseAgent):
 
     @staticmethod
     def _is_greeting(query: str, language: str) -> bool:
-        q = query.strip()
-        if language == "ar":
-            return any(g in q for g in AR_GREETINGS)
-        return q.lower() in EN_GREETINGS or any(
-            g in q.lower() for g in EN_GREETINGS
-        )
+        """Greeting only if the message IS a greeting: a whole-phrase match,
+        or a short message made entirely of greeting words. This avoids
+        substring false positives like "hi" inside "this"."""
+        letters_only = re.sub(r"[^\u0621-\u064Aa-zA-Z\s]", " ", query)
+        normalized = re.sub(r"\s+", " ", letters_only).strip().lower()
+        if not normalized:
+            return False
+
+        if normalized in {p.lower() for p in greeting_phrases(language)}:
+            return True
+
+        words = normalized.split()
+        vocab = greeting_tokens(language)
+        return len(words) <= 3 and all(w in vocab for w in words)
 
     @staticmethod
     def _classify_legal(query: str, language: str) -> tuple:
@@ -98,17 +86,18 @@ class RouterAgent(BaseAgent):
         q_lower = query.lower()
 
         if language == "ar":
-            legal_hits = sum(1 for kw in _LEGAL_KEYWORDS_AR if kw in query)
-            non_legal_hits = sum(1 for kw in _NON_LEGAL_KEYWORDS_AR if kw in query)
+            legal_hits = sum(1 for kw in LEGAL_KEYWORDS_AR if kw in query)
+            non_legal_hits = sum(1 for kw in NON_LEGAL_KEYWORDS_AR if kw in query)
         else:
-            legal_hits = sum(1 for kw in _LEGAL_KEYWORDS_EN if kw in q_lower)
-            non_legal_hits = sum(1 for kw in _NON_LEGAL_KEYWORDS_EN if kw in q_lower)
+            legal_hits = sum(
+                1 for kw in LEGAL_KEYWORDS_EN if kw in q_lower.split()
+            )
+            non_legal_hits = sum(
+                1 for kw in NON_LEGAL_KEYWORDS_EN if kw in q_lower.split()
+            )
 
         # Article number reference is a strong legal signal
-        has_article_ref = bool(
-            re.search(r"(?:مادة|مــادة|المادة)\s*[\(（]?\s*\d+", query)
-            or re.search(r"[Aa]rt(?:icle)?\.?\s*\d+", query)
-        )
+        has_article_ref = any(re.search(pat, query) for pat in ARTICLE_PATTERNS)
         if has_article_ref:
             legal_hits += 3
 

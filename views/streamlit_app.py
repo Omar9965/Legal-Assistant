@@ -9,6 +9,7 @@ Premium dark-themed chat interface with:
 
 from __future__ import annotations
 
+import html
 import os
 import sys
 import uuid
@@ -20,8 +21,9 @@ import streamlit as st
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from controllers.graph import run_query
+from models.resources import get_embedding_function, get_llm
 from models.vector_store import get_collection_count
-from utils.config import LEGAL_AR_COLLECTION, get_embedding_function, get_llm
+from utils.config import LEGAL_AR_COLLECTION, LLM_MODEL_NAME
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -208,6 +210,15 @@ def preload_models() -> bool:
     return True
 
 
+@st.cache_data(ttl=60, show_spinner=False)
+def _legal_chunk_count() -> int:
+    """Cached collection count so sidebar reruns don't hit Chroma each time."""
+    try:
+        return get_collection_count(LEGAL_AR_COLLECTION)
+    except Exception:
+        return 0
+
+
 # ── Session State ─────────────────────────────────────────────────────────────
 
 def _new_conversation_entry() -> dict[str, Any]:
@@ -279,11 +290,12 @@ def _truncate(text: str, max_len: int) -> str:
 
 def _html_message(content: str, role: str) -> str:
     css_class = "user-message" if role == "user" else "assistant-message"
-    return f'<div class="chat-message {css_class}">{content}</div>'
+    return f'<div class="chat-message {css_class}">{html.escape(content)}</div>'
 
 
 def _html_debug_trace(trace: list[str]) -> str:
-    return f'<div class="debug-trace">{"<br>".join(trace)}</div>'
+    escaped = "<br>".join(html.escape(line) for line in trace)
+    return f'<div class="debug-trace">{escaped}</div>'
 
 
 def _html_metric_card(value: int | str, label: str) -> str:
@@ -355,11 +367,7 @@ def render_sidebar() -> None:
         st.markdown("---")
         st.markdown("### 📊 System Status")
 
-        try:
-            legal_count = get_collection_count(LEGAL_AR_COLLECTION)
-        except Exception:
-            legal_count = 0
-
+        legal_count = _legal_chunk_count()
         st.markdown(_html_metric_card(legal_count, "📜 Legal Chunks"), unsafe_allow_html=True)
 
         arrow = "▶" if st.session_state.sidebar_collapsed else "▼"
@@ -371,11 +379,10 @@ def render_sidebar() -> None:
             _render_conversation_list()
 
         st.markdown("---")
-        from utils.config import LLM_MODEL_NAME
-        model_display = LLM_MODEL_NAME or "OpenRouter LLM"
+        model_display = LLM_MODEL_NAME or "AI LLM"
         st.markdown(
             "<p style='text-align:center;color:#64748b;font-size:0.75rem;'>"
-            f"Powered by {model_display} via OpenRouter<br>"
+            f"Powered by {model_display}<br>"
             "Egyptian Civil Code AI Assistant<br>"
             f"Chat: {st.session_state.current_thread_id[:8]}..."
             "</p>",

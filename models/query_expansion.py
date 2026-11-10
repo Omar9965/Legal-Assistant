@@ -2,7 +2,7 @@
 Query Expansion — Generate query variations for better semantic search coverage.
 
 Strategies:
-    1. LLM-based expansion (primary) — semantically rich reformulations via OpenRouter
+    1. LLM-based expansion (primary) — semantically rich reformulations via the configured LLM endpoint
     2. Static synonym expansion (fallback) — fast, no API call, used in retry loops
 """
 
@@ -10,8 +10,6 @@ import logging
 from typing import List
 
 from langchain_core.prompts import ChatPromptTemplate
-
-from models.document_processor import extract_article_number
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +63,7 @@ def _llm_expand(query: str, language: str = "ar", max_variations: int = 3) -> Li
     Returns:
         List of expanded queries (may be empty if LLM fails).
     """
-    from utils.config import get_llm
+    from models.resources import get_llm
 
     try:
         llm = get_llm()
@@ -104,7 +102,6 @@ def expand_query(
     query: str,
     language: str = "ar",
     max_variations: int = 3,
-    **kwargs,
 ) -> List[str]:
     """
     Generate query variations for improved semantic search.
@@ -131,7 +128,7 @@ def expand_query(
                 expanded_queries.append(exp)
     else:
         # Fallback: static synonym expansion
-        for exp in _fallback_expansions(query, language):
+        for exp in fallback_expansions(query, language):
             if exp not in expanded_queries:
                 expanded_queries.append(exp)
 
@@ -140,7 +137,7 @@ def expand_query(
 
 # ── Static Fallback (used by reformulate_node for fast retry) ────────────────
 
-def _fallback_expansions(query: str, language: str) -> List[str]:
+def fallback_expansions(query: str, language: str) -> List[str]:
     """Fast query expansion using predefined synonym patterns.
 
     Intentionally avoids LLM calls — used in the retry loop

@@ -9,13 +9,11 @@ class AgentState(TypedDict):
     # Router output
     language: str           # "ar" or "en"
     is_legal: bool
+    is_greeting: bool       # true only when the query IS a greeting
     router_confidence: float  # 0.0-1.0 confidence score
-    router_reason: str
-    
+
     # Cache output
     cache_hit: bool
-    cached_answer: Optional[str]
-    similarity_score: float
     
     # Researcher output & iteration tracking
     retrieved_docs: list

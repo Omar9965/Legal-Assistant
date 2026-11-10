@@ -10,10 +10,11 @@ from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from utils.config import (
     CHROMA_DB_PATH,
+    CHROMA_DISTANCE_METRIC,
     LEGAL_AR_COLLECTION,
     TOP_K,
-    get_embedding_function,
 )
+from models.resources import get_embedding_function
 
 _collection_cache: dict[str, Chroma] = {}
 
@@ -30,6 +31,7 @@ def _get_cached_collection(collection_name: str) -> Chroma:
             collection_name=collection_name,
             embedding_function=get_embedding_function(),
             persist_directory=CHROMA_DB_PATH,
+            collection_metadata={"hnsw:space": CHROMA_DISTANCE_METRIC},
         )
     return _collection_cache[collection_name]
 
@@ -78,11 +80,11 @@ def search(
     results_with_scores = collection.similarity_search_with_score(query, **kwargs)
 
     # Attach the embedding-based similarity score to each document's metadata.
-    # ChromaDB returns a distance (lower = more similar); convert to 0-1 similarity.
+    # With the cosine metric, ChromaDB returns cosine distance: s = 1 - d.
     documents = []
     for doc, distance in results_with_scores:
         distance = max(0.0, distance)
-        doc.metadata["relevance_score"] = max(0.0, 1.0 - (distance / 2.0))
+        doc.metadata["relevance_score"] = max(0.0, 1.0 - distance)
         documents.append(doc)
 
     return documents
@@ -107,18 +109,6 @@ def delete_documents_by_source(source: str, collection_name: str = LEGAL_AR_COLL
     except Exception as e:
         print(f"[VectorStore] Could not delete by source '{source}': {e}")
     # Invalidate cache so subsequent writes use a fresh wrapper
-    reset_collection_cache(collection_name)
-
-
-def clear_collection(collection_name: str) -> None:
-    """Delete all documents in a collection (for re-ingestion)."""
-    client = _get_chroma_client()
-    try:
-        client.delete_collection(collection_name)
-        print(f"[VectorStore] Cleared collection '{collection_name}'.")
-    except Exception:
-        print(f"[VectorStore] Collection '{collection_name}' does not exist, nothing to clear.")
-    # Invalidate the in-memory cache so subsequent writes don't use a stale wrapper
     reset_collection_cache(collection_name)
 
 

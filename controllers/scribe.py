@@ -6,9 +6,7 @@ grounded, well-cited legal answers.
 """
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.documents import Document
-from models.semantic_cache import store as cache_store
-from utils.config import get_llm
-from controllers.base_agent import BaseAgent
+from models.resources import get_llm
 
 
 SCRIBE_PROMPT_AR = ChatPromptTemplate.from_messages([
@@ -66,11 +64,11 @@ SCRIBE_PROMPT_EN = ChatPromptTemplate.from_messages([
 ])
 
 
-class ScribeAgent(BaseAgent):
+class ScribeAgent:
     """
     Agent responsible for generating formal, structured legal responses.
+    Cache policy is handled upstream (graph/run_query), not here.
     """
-    
     def _format_context(self, documents: list[Document]) -> str:
         """Format retrieved documents into a context string for the prompt."""
         if not documents:
@@ -100,7 +98,9 @@ class ScribeAgent(BaseAgent):
             if role == "user":
                 history_parts.append(f"المستخدم/User: {content}")
             elif role == "assistant":
-                history_parts.append(f"المستشار/Advisor: {content[:500]}...")  # Truncate long answers
+                truncated = content[:500]
+                suffix = "..." if len(content) > 500 else ""
+                history_parts.append(f"المستشار/Advisor: {truncated}{suffix}")
 
         return "\n".join(history_parts)
 
@@ -110,20 +110,18 @@ class ScribeAgent(BaseAgent):
         retrieved_docs: list[Document],
         conversation_history: list = None,
         language: str = "ar",
-        should_cache: bool = True,
         num_docs: int = 0,
         max_relevance: float = 1.0,
     ) -> str:
         """
         Generate a formal legal response based on retrieved context.
-        
+
         Args:
             query: The user's legal query.
             retrieved_docs: List of relevant Document objects from retrieval.
             conversation_history: List of past messages [{"role": ..., "content": ...}].
             language: Response language ("ar" or "en").
-            should_cache: Whether to store the result in semantic cache.
-        
+
         Returns:
             The generated legal response as a string.
         """
@@ -144,12 +142,4 @@ class ScribeAgent(BaseAgent):
         })
 
         answer = response.content.strip()
-
-        # Store in semantic cache
-        if should_cache and answer:
-            try:
-                cache_store(query, answer)
-            except Exception as e:
-                print(f"[Scribe] Warning: Failed to cache response: {e}")
-
         return answer
