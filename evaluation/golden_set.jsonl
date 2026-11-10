@@ -1,0 +1,198 @@
+{"id": "q001", "query": "ما نص المادة 163 من القانون المدني؟", "language": "ar", "type": "article_lookup", "relevant_articles": [163]}
+{"id": "q002", "query": "What does Article 147 of the Egyptian Civil Code say?", "language": "en", "type": "article_lookup", "relevant_articles": [147]}
+{"id": "q003", "query": "اشرح لي المادة ١٤٧", "language": "ar", "type": "article_lookup", "relevant_articles": [147]}
+{"id": "q004", "query": "نص المادة 418", "language": "ar", "type": "article_lookup", "relevant_articles": [418]}
+{"id": "q005", "query": "Show me Article 558", "language": "en", "type": "article_lookup", "relevant_articles": [558]}
+{"id": "q006", "query": "ما هي المادة 802؟", "language": "ar", "type": "article_lookup", "relevant_articles": [802]}
+{"id": "q007", "query": "المادة ٦٥١ مدني", "language": "ar", "type": "article_lookup", "relevant_articles": [651]}
+{"id": "q008", "query": "م 226 مدني", "language": "ar", "type": "article_lookup", "relevant_articles": [226]}
+{"id": "q009", "query": "What is article 89 about?", "language": "en", "type": "article_lookup", "relevant_articles": [89]}
+{"id": "q010", "query": "اقرأ لي المادة 1030", "language": "ar", "type": "article_lookup", "relevant_articles": [1030]}
+{"id": "q011", "query": "Article 374", "language": "en", "type": "article_lookup", "relevant_articles": [374]}
+{"id": "q012", "query": "ما مضمون المادة 172؟", "language": "ar", "type": "article_lookup", "relevant_articles": [172]}
+{"id": "q013", "query": "المادة 1052", "language": "ar", "type": "article_lookup", "relevant_articles": [1052]}
+{"id": "q014", "query": "ما هي المواد من 120 إلى 124؟", "language": "ar", "type": "article_lookup_multi", "relevant_articles": [120, 121, 122, 123, 124]}
+{"id": "q015", "query": "اشرح المادتين 140 و141", "language": "ar", "type": "article_lookup_multi", "relevant_articles": [140, 141]}
+{"id": "q016", "query": "ما هي أركان انعقاد العقد وكيف يتم التعبير عن الإرادة؟", "language": "ar", "type": "conceptual", "relevant_articles": [89, 90]}
+{"id": "q017", "query": "متى يعتبر الغلط جوهرياً ويجوز معه إبطال العقد؟", "language": "ar", "type": "conceptual", "relevant_articles": [120, 121]}
+{"id": "q018", "query": "ما هو التدليس وما أثره على العقد؟", "language": "ar", "type": "conceptual", "relevant_articles": [125, 126]}
+{"id": "q019", "query": "متى يجوز إبطال العقد للإكراه؟", "language": "ar", "type": "conceptual", "relevant_articles": [127, 128]}
+{"id": "q020", "query": "ما هو الاستغلال والغبن في العقود وما مدة رفع الدعوى؟", "language": "ar", "type": "conceptual", "relevant_articles": [129]}
+{"id": "q021", "query": "هل يصح العقد إذا كان محل الالتزام مستحيلاً؟", "language": "ar", "type": "conceptual", "relevant_articles": [132]}
+{"id": "q022", "query": "ما حكم العقد الذي سببه مخالف للنظام العام أو الآداب؟", "language": "ar", "type": "conceptual", "relevant_articles": [135, 136]}
+{"id": "q023", "query": "ما الفرق بين بطلان العقد وقابليته للإبطال ومدة سقوط كل دعوى؟", "language": "ar", "type": "conceptual", "relevant_articles": [140, 141]}
+{"id": "q024", "query": "ما آثار إبطال العقد أو بطلانه على المتعاقدين؟", "language": "ar", "type": "conceptual", "relevant_articles": [142]}
+{"id": "q025", "query": "هل يجوز تعديل الالتزام التعاقدي إذا طرأت حوادث استثنائية لم تكن متوقعة؟", "language": "ar", "type": "conceptual", "relevant_articles": [147]}
+{"id": "q026", "query": "كيف يفسر القاضي عبارات العقد الغامضة؟", "language": "ar", "type": "conceptual", "relevant_articles": [150, 151]}
+{"id": "q027", "query": "ما المقصود بعقود الإذعان وما حكم الشروط التعسفية فيها؟", "language": "ar", "type": "conceptual", "relevant_articles": [100, 149]}
+{"id": "q028", "query": "متى يجوز طلب فسخ العقد لعدم تنفيذ أحد الطرفين التزامه؟", "language": "ar", "type": "conceptual", "relevant_articles": [157, 158, 159]}
+{"id": "q029", "query": "ما هو الاشتراط لمصلحة الغير؟", "language": "ar", "type": "conceptual", "relevant_articles": [154, 155, 156]}
+{"id": "q030", "query": "ما حكم من وجه للجمهور وعداً بجائزة؟", "language": "ar", "type": "conceptual", "relevant_articles": [162]}
+{"id": "q031", "query": "ما هي شروط قيام المسؤولية التقصيرية؟", "language": "ar", "type": "conceptual", "relevant_articles": [163]}
+{"id": "q032", "query": "متى يعفى الشخص من التعويض بسبب السبب الأجنبي أو القوة القاهرة؟", "language": "ar", "type": "conceptual", "relevant_articles": [165]}
+{"id": "q033", "query": "ما حكم الضرر الناشئ عن الدفاع الشرعي؟", "language": "ar", "type": "conceptual", "relevant_articles": [166]}
+{"id": "q034", "query": "ما حكم من سبب ضرراً للغير لتفادي ضرر أكبر؟", "language": "ar", "type": "conceptual", "relevant_articles": [168]}
+{"id": "q035", "query": "ما مدة تقادم دعوى التعويض عن العمل غير المشروع؟", "language": "ar", "type": "conceptual", "relevant_articles": [172]}
+{"id": "q036", "query": "متى يسأل المتبوع عن أعمال تابعه؟", "language": "ar", "type": "conceptual", "relevant_articles": [174]}
+{"id": "q037", "query": "من المسؤول عن الضرر الذي يحدثه الحيوان؟", "language": "ar", "type": "conceptual", "relevant_articles": [176]}
+{"id": "q038", "query": "ما شروط الإثراء بلا سبب؟", "language": "ar", "type": "conceptual", "relevant_articles": [179, 180]}
+{"id": "q039", "query": "ما حكم رد غير المستحق وهل يرد صاحب النية السيئة الثمار؟", "language": "ar", "type": "conceptual", "relevant_articles": [181, 185, 187]}
+{"id": "q040", "query": "ما هي الفضالة وما التزامات الفضولي؟", "language": "ar", "type": "conceptual", "relevant_articles": [188, 191, 192, 193]}
+{"id": "q041", "query": "متى يلزم إعذار المدين ومتى لا يلزم؟", "language": "ar", "type": "conceptual", "relevant_articles": [218, 219, 220]}
+{"id": "q042", "query": "ما الذي يشمله التعويض عن عدم تنفيذ الالتزام؟", "language": "ar", "type": "conceptual", "relevant_articles": [221, 222]}
+{"id": "q043", "query": "ما حكم التعويض الاتفاقي أو الشرط الجزائي؟", "language": "ar", "type": "conceptual", "relevant_articles": [223, 224, 225]}
+{"id": "q044", "query": "ما هو سعر الفائدة القانونية والحد الأقصى للفائدة الاتفاقية؟", "language": "ar", "type": "conceptual", "relevant_articles": [226, 227]}
+{"id": "q045", "query": "هل يجوز تقاضي فوائد على متجمد الفوائد؟", "language": "ar", "type": "conceptual", "relevant_articles": [232]}
+{"id": "q046", "query": "ما هي الدعوى غير المباشرة وشروطها؟", "language": "ar", "type": "conceptual", "relevant_articles": [235, 236]}
+{"id": "q047", "query": "ما هي دعوى عدم نفاذ تصرفات المدين في حق الدائن؟", "language": "ar", "type": "conceptual", "relevant_articles": [237, 238]}
+{"id": "q048", "query": "ما هي الصورية وأثرها بالنسبة إلى الغير؟", "language": "ar", "type": "conceptual", "relevant_articles": [244, 245]}
+{"id": "q049", "query": "ما هو الحق في الحبس؟", "language": "ar", "type": "conceptual", "relevant_articles": [246, 247]}
+{"id": "q050", "query": "متى يشهر إعسار المدين وما أثره على الديون المؤجلة؟", "language": "ar", "type": "conceptual", "relevant_articles": [249, 250, 255]}
+{"id": "q051", "query": "ما الفرق بين الشرط الواقف والشرط الفاسخ؟", "language": "ar", "type": "conceptual", "relevant_articles": [268, 269]}
+{"id": "q052", "query": "متى يسقط حق المدين في الأجل؟", "language": "ar", "type": "conceptual", "relevant_articles": [273]}
+{"id": "q053", "query": "هل التضامن بين المدينين مفترض؟", "language": "ar", "type": "conceptual", "relevant_articles": [279]}
+{"id": "q054", "query": "ما شروط حوالة الحق ومتى تنفذ في حق المدين؟", "language": "ar", "type": "conceptual", "relevant_articles": [303, 305]}
+{"id": "q055", "query": "ما هي حوالة الدين وهل تنفذ دون موافقة الدائن؟", "language": "ar", "type": "conceptual", "relevant_articles": [315, 316]}
+{"id": "q056", "query": "ما شروط المقاصة بين الدينين؟", "language": "ar", "type": "conceptual", "relevant_articles": [362, 365]}
+{"id": "q057", "query": "ما هو التجديد وهل يفترض؟", "language": "ar", "type": "conceptual", "relevant_articles": [352, 354]}
+{"id": "q058", "query": "ما المدة العامة لتقادم الالتزامات؟", "language": "ar", "type": "conceptual", "relevant_articles": [374]}
+{"id": "q059", "query": "ما هي الحقوق التي تتقادم بخمس سنوات؟", "language": "ar", "type": "conceptual", "relevant_articles": [375, 376]}
+{"id": "q060", "query": "هل يجوز للمحكمة أن تقضي بالتقادم من تلقاء نفسها؟", "language": "ar", "type": "conceptual", "relevant_articles": [387]}
+{"id": "q061", "query": "ما هي أسباب انقطاع التقادم؟", "language": "ar", "type": "conceptual", "relevant_articles": [383, 384]}
+{"id": "q062", "query": "ما هو عقد البيع وما التزامات البائع الأساسية؟", "language": "ar", "type": "conceptual", "relevant_articles": [418, 428, 431]}
+{"id": "q063", "query": "متى يضمن البائع العيوب الخفية وما مدة دعوى الضمان؟", "language": "ar", "type": "conceptual", "relevant_articles": [447, 449, 452]}
+{"id": "q064", "query": "ما ضمان البائع للتعرض والاستحقاق؟", "language": "ar", "type": "conceptual", "relevant_articles": [439, 440]}
+{"id": "q065", "query": "ما حكم بيع ملك الغير؟", "language": "ar", "type": "conceptual", "relevant_articles": [466, 467]}
+{"id": "q066", "query": "ما حكم بيع الوفاء؟", "language": "ar", "type": "conceptual", "relevant_articles": [465]}
+{"id": "q067", "query": "ما حكم دفع العربون وهل يجوز العدول؟", "language": "ar", "type": "conceptual", "relevant_articles": [103]}
+{"id": "q068", "query": "ما حكم بيع المريض مرض الموت؟", "language": "ar", "type": "conceptual", "relevant_articles": [477, 916]}
+{"id": "q069", "query": "ما شروط صحة الهبة والشكل الواجب لها؟", "language": "ar", "type": "conceptual", "relevant_articles": [486, 487, 488]}
+{"id": "q070", "query": "متى يجوز الرجوع في الهبة وما موانع الرجوع؟", "language": "ar", "type": "conceptual", "relevant_articles": [500, 501, 502]}
+{"id": "q071", "query": "ما هو عقد الشركة وهل يشترط أن يكون مكتوباً؟", "language": "ar", "type": "conceptual", "relevant_articles": [505, 507]}
+{"id": "q072", "query": "هل يجوز الاتفاق على حرمان شريك من الأرباح؟", "language": "ar", "type": "conceptual", "relevant_articles": [515]}
+{"id": "q073", "query": "كيف تنتهي الشركة؟", "language": "ar", "type": "conceptual", "relevant_articles": [526, 527, 528, 529]}
+{"id": "q074", "query": "ما هو عقد القرض وهل يجوز للمقترض رد القرض قبل ميعاده؟", "language": "ar", "type": "conceptual", "relevant_articles": [538, 544]}
+{"id": "q075", "query": "ما هو عقد الصلح وما أثره؟", "language": "ar", "type": "conceptual", "relevant_articles": [549, 553]}
+{"id": "q076", "query": "ما هو عقد الإيجار؟", "language": "ar", "type": "conceptual", "relevant_articles": [558]}
+{"id": "q077", "query": "ما مواعيد التنبيه بالإخلاء في الإيجار غير محدد المدة؟", "language": "ar", "type": "conceptual", "relevant_articles": [563]}
+{"id": "q078", "query": "من يتحمل الترميمات في العين المؤجرة المؤجر أم المستأجر؟", "language": "ar", "type": "conceptual", "relevant_articles": [567, 582]}
+{"id": "q079", "query": "هل يجوز للمستأجر التنازل عن الإيجار أو التأجير من الباطن؟", "language": "ar", "type": "conceptual", "relevant_articles": [593, 594]}
+{"id": "q080", "query": "ماذا يحدث للإيجار عند وفاة المستأجر؟", "language": "ar", "type": "conceptual", "relevant_articles": [601]}
+{"id": "q081", "query": "ما أثر بيع العين المؤجرة على عقد الإيجار؟", "language": "ar", "type": "conceptual", "relevant_articles": [604, 605]}
+{"id": "q082", "query": "ما هو عقد المقاولة؟", "language": "ar", "type": "conceptual", "relevant_articles": [646]}
+{"id": "q083", "query": "ما مدة ضمان المهندس والمقاول لسلامة المباني؟", "language": "ar", "type": "conceptual", "relevant_articles": [651, 654]}
+{"id": "q084", "query": "هل يجوز لرب العمل إنهاء عقد المقاولة قبل إتمامه؟", "language": "ar", "type": "conceptual", "relevant_articles": [663]}
+{"id": "q085", "query": "ما هو عقد العمل؟", "language": "ar", "type": "conceptual", "relevant_articles": [674]}
+{"id": "q086", "query": "ما شروط صحة اتفاق عدم المنافسة بعد انتهاء عقد العمل؟", "language": "ar", "type": "conceptual", "relevant_articles": [686, 687]}
+{"id": "q087", "query": "ما حكم الفصل التعسفي للعامل؟", "language": "ar", "type": "conceptual", "relevant_articles": [695, 696]}
+{"id": "q088", "query": "ما هي الوكالة وما الفرق بين الوكالة العامة والخاصة؟", "language": "ar", "type": "conceptual", "relevant_articles": [699, 701, 702]}
+{"id": "q089", "query": "متى يجوز للموكل إنهاء الوكالة؟", "language": "ar", "type": "conceptual", "relevant_articles": [715]}
+{"id": "q090", "query": "ما هو عقد الوديعة؟", "language": "ar", "type": "conceptual", "relevant_articles": [718]}
+{"id": "q091", "query": "ما حكم المقامرة والرهان؟", "language": "ar", "type": "conceptual", "relevant_articles": [739]}
+{"id": "q092", "query": "ما هو عقد التأمين؟", "language": "ar", "type": "conceptual", "relevant_articles": [747]}
+{"id": "q093", "query": "ما هي الكفالة وكيف تثبت؟", "language": "ar", "type": "conceptual", "relevant_articles": [772, 773]}
+{"id": "q094", "query": "ما المقصود بتجريد المدين في الكفالة؟", "language": "ar", "type": "conceptual", "relevant_articles": [788, 789]}
+{"id": "q095", "query": "ما حدود حق الملكية والقيود التي ترد عليه؟", "language": "ar", "type": "conceptual", "relevant_articles": [802, 806]}
+{"id": "q096", "query": "ما حكم مضار الجوار غير المألوفة؟", "language": "ar", "type": "conceptual", "relevant_articles": [807]}
+{"id": "q097", "query": "ما المسافة الواجبة لفتح المطلات على ملك الجار؟", "language": "ar", "type": "conceptual", "relevant_articles": [819, 820]}
+{"id": "q098", "query": "ما هو حق المرور للأرض المحبوسة عن الطريق العام؟", "language": "ar", "type": "conceptual", "relevant_articles": [812]}
+{"id": "q099", "query": "ما أحكام الحائط المشترك وتعليته؟", "language": "ar", "type": "conceptual", "relevant_articles": [814, 815, 816]}
+{"id": "q100", "query": "كيف تدار الملكية الشائعة وكيف تقسم؟", "language": "ar", "type": "conceptual", "relevant_articles": [827, 828, 834]}
+{"id": "q101", "query": "ما أحكام ملكية الطبقات والشقق؟", "language": "ar", "type": "conceptual", "relevant_articles": [856, 857, 858]}
+{"id": "q102", "query": "لمن يكون الكنز المدفون الذي يعثر عليه في عقار؟", "language": "ar", "type": "conceptual", "relevant_articles": [872]}
+{"id": "q103", "query": "ما حكم الأراضي غير المزروعة التي لا مالك لها؟", "language": "ar", "type": "conceptual", "relevant_articles": [874]}
+{"id": "q104", "query": "ما حكم التصرف الصادر في مرض الموت بقصد التبرع؟", "language": "ar", "type": "conceptual", "relevant_articles": [916]}
+{"id": "q105", "query": "ما هي شروط الأخذ بالشفعة ومن يثبت له الحق فيها؟", "language": "ar", "type": "conceptual", "relevant_articles": [935, 936]}
+{"id": "q106", "query": "ما هو ميعاد إعلان الرغبة في الأخذ بالشفعة وإيداع الثمن؟", "language": "ar", "type": "conceptual", "relevant_articles": [940, 942]}
+{"id": "q107", "query": "ما هي الحالات التي لا تجوز فيها الشفعة؟", "language": "ar", "type": "conceptual", "relevant_articles": [939]}
+{"id": "q108", "query": "ما هي دعاوى الحيازة؟", "language": "ar", "type": "conceptual", "relevant_articles": [958, 961, 962]}
+{"id": "q109", "query": "ما شروط تملك العقار بالتقادم المكسب؟", "language": "ar", "type": "conceptual", "relevant_articles": [968, 969]}
+{"id": "q110", "query": "كيف يتملك الحائز المنقول بالحيازة؟", "language": "ar", "type": "conceptual", "relevant_articles": [976, 977]}
+{"id": "q111", "query": "هل يجوز تملك أموال الدولة الخاصة بالتقادم؟", "language": "ar", "type": "conceptual", "relevant_articles": [970]}
+{"id": "q112", "query": "ما مدة عقد الحكر؟", "language": "ar", "type": "conceptual", "relevant_articles": [999]}
+{"id": "q113", "query": "ما هو حق الارتفاق وكيف يكتسب؟", "language": "ar", "type": "conceptual", "relevant_articles": [1015, 1016]}
+{"id": "q114", "query": "ما هو الرهن الرسمي والشكل الواجب لانعقاده؟", "language": "ar", "type": "conceptual", "relevant_articles": [1030, 1031]}
+{"id": "q115", "query": "ما حكم الاتفاق على تملك الدائن للعقار المرهون عند عدم الوفاء؟", "language": "ar", "type": "conceptual", "relevant_articles": [1052]}
+{"id": "q116", "query": "كيف يطهر الحائز العقار المرهون؟", "language": "ar", "type": "conceptual", "relevant_articles": [1064, 1065]}
+{"id": "q117", "query": "ما هو حق الاختصاص وكيف يؤخذ؟", "language": "ar", "type": "conceptual", "relevant_articles": [1085, 1089]}
+{"id": "q118", "query": "ما هو الرهن الحيازي؟", "language": "ar", "type": "conceptual", "relevant_articles": [1096]}
+{"id": "q119", "query": "ما هو حق الامتياز وما ترتيب المصروفات القضائية؟", "language": "ar", "type": "conceptual", "relevant_articles": [1130, 1138, 1139]}
+{"id": "q120", "query": "ما هو امتياز المؤجر على منقولات المستأجر؟", "language": "ar", "type": "conceptual", "relevant_articles": [1143]}
+{"id": "q121", "query": "ما هو سن الرشد ومتى يعتبر الشخص فاقد التمييز؟", "language": "ar", "type": "conceptual", "relevant_articles": [44, 45]}
+{"id": "q122", "query": "ما هي الأشخاص الاعتبارية وما حقوقها؟", "language": "ar", "type": "conceptual", "relevant_articles": [52, 53]}
+{"id": "q123", "query": "ما هي الأموال العامة وهل يجوز الحجز عليها؟", "language": "ar", "type": "conceptual", "relevant_articles": [87, 88]}
+{"id": "q124", "query": "ما الفرق بين العقار والمنقول؟", "language": "ar", "type": "conceptual", "relevant_articles": [82]}
+{"id": "q125", "query": "متى يكون استعمال الحق غير مشروع؟", "language": "ar", "type": "conceptual", "relevant_articles": [4, 5]}
+{"id": "q126", "query": "اشتريت سيارة واكتشفت عيباً خفياً بعد شهرين فهل يحق لي الرجوع على البائع؟", "language": "ar", "type": "scenario", "relevant_articles": [447, 449, 452]}
+{"id": "q127", "query": "بنى جاري منزله بحسن نية وتجاوز بجزء صغير على حدود أرضي", "language": "ar", "type": "scenario", "relevant_articles": [928]}
+{"id": "q128", "query": "شخص بنى منشآت على أرضي دون إذني وهو يعلم أنها ليست أرضه", "language": "ar", "type": "scenario", "relevant_articles": [924]}
+{"id": "q129", "query": "فتح جاري شباكاً يطل على منزلي على بعد خمسين سنتيمتراً", "language": "ar", "type": "scenario", "relevant_articles": [819, 820]}
+{"id": "q130", "query": "عضني كلب جاري في الشارع", "language": "ar", "type": "scenario", "relevant_articles": [176]}
+{"id": "q131", "query": "سقط جزء من جدار عمارة على سيارتي المركونة", "language": "ar", "type": "scenario", "relevant_articles": [177]}
+{"id": "q132", "query": "ابني عمره عشر سنوات كسر زجاج منزل الجيران فمن المسؤول؟", "language": "ar", "type": "scenario", "relevant_articles": [173]}
+{"id": "q133", "query": "بعت شقتي والمشتري لم يدفع باقي الثمن في الموعد", "language": "ar", "type": "scenario", "relevant_articles": [157, 158, 459]}
+{"id": "q134", "query": "ارتفعت أسعار مواد البناء فجأة بسبب حرب وأصبح تنفيذ العقد مرهقاً لي", "language": "ar", "type": "scenario", "relevant_articles": [147, 658]}
+{"id": "q135", "query": "تركت العمل وأريد العمل لدى منافس فهل يمنعني عقد العمل؟", "language": "ar", "type": "scenario", "relevant_articles": [686, 687]}
+{"id": "q136", "query": "أنهى صاحب العمل عقدي بلا إخطار مسبق", "language": "ar", "type": "scenario", "relevant_articles": [694, 695]}
+{"id": "q137", "query": "أعطيت أخي وكالة عامة فهل يستطيع أن يبيع بها شقتي؟", "language": "ar", "type": "scenario", "relevant_articles": [701, 702]}
+{"id": "q138", "query": "سرقت أمتعتي من غرفتي في الفندق", "language": "ar", "type": "scenario", "relevant_articles": [727, 728]}
+{"id": "q139", "query": "شاركت في مشروع وخسر فهل أتحمل ديون الشركة من مالي الخاص؟", "language": "ar", "type": "scenario", "relevant_articles": [514, 523, 524]}
+{"id": "q140", "query": "باع مدين كل أملاكه لابنه إضراراً بدائنيه", "language": "ar", "type": "scenario", "relevant_articles": [237, 238]}
+{"id": "q141", "query": "دفعت مبلغاً لشخص بالخطأ وأريد استرداده", "language": "ar", "type": "scenario", "relevant_articles": [181, 182, 187]}
+{"id": "q142", "query": "أضع يدي على أرض منذ عشرين سنة دون سند", "language": "ar", "type": "scenario", "relevant_articles": [968]}
+{"id": "q143", "query": "أراد والد أن يهب عقاراً لابنه بعقد عرفي", "language": "ar", "type": "scenario", "relevant_articles": [488]}
+{"id": "q144", "query": "البنك يشترط أن يتملك العقار المرهون إذا تأخرت في السداد", "language": "ar", "type": "scenario", "relevant_articles": [1052]}
+{"id": "q145", "query": "ظهرت شروخ في العمارة بعد ثماني سنوات من تسلمها", "language": "ar", "type": "scenario", "relevant_articles": [651, 654]}
+{"id": "q146", "query": "توفي مستأجر الشقة فهل يستمر الإيجار لورثته؟", "language": "ar", "type": "scenario", "relevant_articles": [601]}
+{"id": "q147", "query": "اشتريت منقولاً من شخص ليس مالكه وأنا حسن النية", "language": "ar", "type": "scenario", "relevant_articles": [976, 977]}
+{"id": "q148", "query": "أخذت قرضاً بفائدة وأريد السداد مبكراً", "language": "ar", "type": "scenario", "relevant_articles": [544]}
+{"id": "q149", "query": "يريد أحد الورثة قسمة الأرض التي ورثوها", "language": "ar", "type": "scenario", "relevant_articles": [834, 835, 836]}
+{"id": "q150", "query": "المقاول لا يلتزم بالمواصفات المتفق عليها أثناء التنفيذ", "language": "ar", "type": "scenario", "relevant_articles": [650]}
+{"id": "q151", "query": "أودعت سيارتي عند صديق فاستعملها دون إذني", "language": "ar", "type": "scenario", "relevant_articles": [719]}
+{"id": "q152", "query": "وعدني شخص ببيع أرضه ثم رفض إتمام البيع", "language": "ar", "type": "scenario", "relevant_articles": [101, 102]}
+{"id": "q153", "query": "توفي ابن أخي في حادث وأريد تعويضاً عن الألم النفسي", "language": "ar", "type": "scenario", "relevant_articles": [222]}
+{"id": "q154", "query": "اشتريت شقة والبايع مش عايز يسلمني إياها", "language": "ar", "type": "colloquial", "relevant_articles": [418, 428, 431, 157]}
+{"id": "q155", "query": "المستأجر أجّر الشقة لحد تاني من غير ما يقولي", "language": "ar", "type": "colloquial", "relevant_articles": [593, 594]}
+{"id": "q156", "query": "الراجل ده ضحك عليا وباعلي حاجة عيبانة", "language": "ar", "type": "colloquial", "relevant_articles": [125, 447]}
+{"id": "q157", "query": "عايز أعرف الديون بتسقط بعد كام سنة", "language": "ar", "type": "colloquial", "relevant_articles": [374, 375, 376, 378]}
+{"id": "q158", "query": "جاري بيرمي الزبالة قدام بيتي ومضايقني", "language": "ar", "type": "colloquial", "relevant_articles": [807]}
+{"id": "q159", "query": "الكفيل يقدر يرجع على المدين بعد ما يدفع الدين؟", "language": "ar", "type": "colloquial", "relevant_articles": [799, 800]}
+{"id": "q160", "query": "What are the elements of liability for a harmful act?", "language": "en", "type": "english", "relevant_articles": [163]}
+{"id": "q161", "query": "Who is liable for damage caused by an animal?", "language": "en", "type": "english", "relevant_articles": [176]}
+{"id": "q162", "query": "How long do I have to annul a voidable contract?", "language": "en", "type": "english", "relevant_articles": [140]}
+{"id": "q163", "query": "Are gambling and betting agreements enforceable?", "language": "en", "type": "english", "relevant_articles": [739]}
+{"id": "q164", "query": "Can a tenant sublet the apartment?", "language": "en", "type": "english", "relevant_articles": [593, 594]}
+{"id": "q165", "query": "Can a court reduce obligations if unforeseen exceptional events make a contract onerous?", "language": "en", "type": "english", "relevant_articles": [147]}
+{"id": "q166", "query": "What is the age of majority?", "language": "en", "type": "english", "relevant_articles": [44]}
+{"id": "q167", "query": "How does the code define a contract of sale?", "language": "en", "type": "english", "relevant_articles": [418]}
+{"id": "q168", "query": "What are the conditions for exercising pre-emption (shufa)?", "language": "en", "type": "english", "relevant_articles": [935, 936, 940]}
+{"id": "q169", "query": "What is the limitation period for doctors' and lawyers' fees?", "language": "en", "type": "english", "relevant_articles": [376]}
+{"id": "q170", "query": "Who owns a treasure found buried in land?", "language": "en", "type": "english", "relevant_articles": [872]}
+{"id": "q171", "query": "What is the legal interest rate on late payment?", "language": "en", "type": "english", "relevant_articles": [226, 227]}
+{"id": "q172", "query": "Can a donor revoke a gift?", "language": "en", "type": "english", "relevant_articles": [500, 501]}
+{"id": "q173", "query": "What is a suretyship contract?", "language": "en", "type": "english", "relevant_articles": [772]}
+{"id": "q174", "query": "What is the ten-year liability of architects and contractors?", "language": "en", "type": "english", "relevant_articles": [651]}
+{"id": "q175", "query": "When is a non-compete clause in an employment contract valid?", "language": "en", "type": "english", "relevant_articles": [686]}
+{"id": "q176", "query": "What are the rules for set-off between debts?", "language": "en", "type": "english", "relevant_articles": [362]}
+{"id": "q177", "query": "What is the difference between a conditional obligation and one subject to a term?", "language": "en", "type": "english", "relevant_articles": [265, 271]}
+{"id": "q178", "query": "How are shares divided among co-owners of shared property?", "language": "en", "type": "english", "relevant_articles": [825, 827, 834]}
+{"id": "q179", "query": "What happens to a lease when the landlord sells the property?", "language": "en", "type": "english", "relevant_articles": [604, 605]}
+{"id": "q180", "query": "وما هي التزامات البائع فيه؟", "language": "ar", "type": "followup", "relevant_articles": [428, 431, 439, 447], "history": [{"role": "user", "content": "ما هو عقد البيع؟"}, {"role": "assistant", "content": "عقد البيع هو عقد يلتزم به البائع أن ينقل للمشتري ملكية شيء أو حقاً مالياً مقابل ثمن نقدي."}]}
+{"id": "q181", "query": "وكم مدة تقادم الدعوى فيها؟", "language": "ar", "type": "followup", "relevant_articles": [172], "history": [{"role": "user", "content": "ما هي المسؤولية التقصيرية؟"}, {"role": "assistant", "content": "هي التزام من ارتكب خطأ سبب ضرراً للغير بالتعويض."}]}
+{"id": "q182", "query": "وكيف ينتهي؟", "language": "ar", "type": "followup", "relevant_articles": [598, 599, 563], "history": [{"role": "user", "content": "ما هو عقد الإيجار؟"}, {"role": "assistant", "content": "عقد يلتزم به المؤجر أن يمكن المستأجر من الانتفاع بشيء معين مدة معينة لقاء أجر معلوم."}]}
+{"id": "q183", "query": "وما المدة التي أعلن فيها رغبتي؟", "language": "ar", "type": "followup", "relevant_articles": [940, 942], "history": [{"role": "user", "content": "ما هي الشفعة؟"}, {"role": "assistant", "content": "رخصة تجيز في بيع العقار الحلول محل المشتري بالشروط المقررة قانوناً."}]}
+{"id": "q184", "query": "وهل يجوز الرجوع على الكفيل مباشرة؟", "language": "ar", "type": "followup", "relevant_articles": [788], "history": [{"role": "user", "content": "ما هي الكفالة؟"}, {"role": "assistant", "content": "عقد يكفل بمقتضاه شخص تنفيذ التزام بأن يفي به إذا لم يف المدين نفسه."}]}
+{"id": "q185", "query": "And how is it created?", "language": "en", "type": "followup", "relevant_articles": [1031, 1035], "history": [{"role": "user", "content": "What is a registered mortgage (ar-rahn ar-rasmi)?"}, {"role": "assistant", "content": "It is a contract giving the creditor a real right over a specified immovable to secure a debt."}]}
+{"id": "q186", "query": "ما هي عاصمة فرنسا؟", "language": "ar", "type": "out_of_domain", "relevant_articles": []}
+{"id": "q187", "query": "اعطني وصفة لعمل الكشري المصري", "language": "ar", "type": "out_of_domain", "relevant_articles": []}
+{"id": "q188", "query": "ما هي عقوبة السرقة في قانون العقوبات؟", "language": "ar", "type": "out_of_domain", "relevant_articles": []}
+{"id": "q189", "query": "ما هي إجراءات تأسيس شركة مساهمة وفق قانون الشركات؟", "language": "ar", "type": "out_of_domain", "relevant_articles": []}
+{"id": "q190", "query": "ما هي نسبة ضريبة الدخل على الأفراد؟", "language": "ar", "type": "out_of_domain", "relevant_articles": []}
+{"id": "q191", "query": "ما هي شروط الترشح لمجلس النواب؟", "language": "ar", "type": "out_of_domain", "relevant_articles": []}
+{"id": "q192", "query": "اشرح لي نظرية النسبية", "language": "ar", "type": "out_of_domain", "relevant_articles": []}
+{"id": "q193", "query": "How do I reset my email password?", "language": "en", "type": "out_of_domain", "relevant_articles": []}
+{"id": "q194", "query": "Who won the 2022 football World Cup?", "language": "en", "type": "out_of_domain", "relevant_articles": []}
+{"id": "q195", "query": "Write me a Python function to sort a list", "language": "en", "type": "out_of_domain", "relevant_articles": []}
+{"id": "q196", "query": "مرحباً", "language": "ar", "type": "greeting", "relevant_articles": []}
+{"id": "q197", "query": "السلام عليكم", "language": "ar", "type": "greeting", "relevant_articles": []}
+{"id": "q198", "query": "hello, how are you?", "language": "en", "type": "greeting", "relevant_articles": []}

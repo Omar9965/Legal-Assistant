@@ -204,5 +204,123 @@ The default workflow is:
 
 ---
 
+## 📊 Retrieval Evaluation & Quality Benchmarks
+
+This repository includes a deterministic retrieval-evaluation pipeline for the legal search layer. It is designed to measure whether the assistant retrieves the correct Egyptian Civil Code articles for a given query and to quantify latency, recall, precision, and ranking quality.
+
+### Evaluation Scripts
+The evaluation tooling lives under the [evaluation/](./evaluation) directory and includes:
+
+- `evaluation/run_retrieval_eval.py` — runs the retrieval pipeline over the benchmark dataset
+- `evaluation/score_retrieval.py` — computes article-level metrics for each query
+- `evaluation/report_retrieval_eval.py` — turns the JSON metrics into a readable Markdown summary
+- `evaluation/retrieval_metrics.json` — current benchmark snapshot used in this README
+
+### Benchmark Setup
+The repository's retrieval benchmark was evaluated against a labeled legal-question set with the following characteristics:
+
+- Total evaluated queries: 185
+- Failed queries: 0
+- K values evaluated: 1, 3, 5, 10
+- Relevance unit: article number
+- Aggregation method: macro-average across labeled queries
+- Notes: greeting/out-of-domain records were excluded, and article IDs are deduplicated in ranked retrieval order
+
+This means the evaluation focuses on article-level retrieval quality rather than answer synthesis quality. The code intentionally separates retrieval scoring from answer-generation scoring, which is important because good retrieval does not automatically imply a correct final legal answer.
+
+### Overall Retrieval Performance
+The current retrieval evaluation summary is:
+
+| Metric | Value |
+|---|---:|
+| Recall@1 | 0.3608 |
+| Precision@1 | 0.4811 |
+| Hit Rate@1 | 0.4811 |
+| Recall@3 | 0.5739 |
+| Precision@3 | 0.2847 |
+| Hit Rate@3 | 0.7135 |
+| Recall@5 | 0.6464 |
+| Precision@5 | 0.2043 |
+| Hit Rate@5 | 0.7514 |
+| Recall@10 | 0.6464 |
+| Precision@10 | 0.1022 |
+| Hit Rate@10 | 0.7514 |
+| MRR | 0.5888 |
+
+### Performance by Query Type
+These results show how retrieval behaves across different legal query patterns:
+
+| Query Type | Query Count | Recall@1 | Recall@3 | Recall@5 | Recall@10 | MRR |
+|---|---:|---:|---:|---:|---:|---:|
+| article_lookup | 13 | 0.7692 | 0.7692 | 0.7692 | 0.7692 | 0.7692 |
+| article_lookup_multi | 2 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
+| colloquial | 6 | 0.0833 | 0.1667 | 0.1667 | 0.1667 | 0.1667 |
+| conceptual | 110 | 0.4038 | 0.6545 | 0.7417 | 0.7417 | 0.6976 |
+| english | 20 | 0.3750 | 0.5500 | 0.6417 | 0.6417 | 0.5267 |
+| followup | 6 | 0.0000 | 0.2500 | 0.3333 | 0.3333 | 0.1667 |
+| scenario | 28 | 0.1548 | 0.3810 | 0.4345 | 0.4345 | 0.3452 |
+
+Key readout:
+
+- Direct article lookup performs strongly and is the most reliable path.
+- Conceptual legal queries are the strongest general semantic-use case, with a Recall@5 of 0.7417 and MRR of 0.6976.
+- Follow-up and scenario-style queries remain the hardest categories; they are more conversational and context-dependent.
+- Colloquial wording is still a weak point and is a likely area for future improvement via better query normalization or hybrid retrieval.
+
+### Performance by Language
+The benchmark also breaks down retrieval quality by language:
+
+| Language | Query Count | Recall@1 | Recall@3 | Recall@5 | Recall@10 | MRR |
+|---|---:|---:|---:|---:|---:|---:|
+| ar | 160 | 0.3453 | 0.5698 | 0.6422 | 0.6422 | 0.5900 |
+| en | 25 | 0.4600 | 0.6000 | 0.6733 | 0.6733 | 0.5813 |
+
+Observations:
+
+- Arabic queries dominate the benchmark and reflect the project's primary legal-use scenario.
+- English retrieval is slightly stronger at Recall@1 and Recall@5, though the gap is modest.
+- The overall system remains robust in both languages, but Arabic retrieval would benefit from stronger handling of colloquial/legal phrasing.
+
+### Latency Profile
+The retrieval layer was also evaluated for speed:
+
+| Metric | Value |
+|---|---:|
+| Mean latency | 411.47 ms |
+| Median latency | 256.21 ms |
+| P95 latency | 315.57 ms |
+
+This indicates the system is generally fast enough for interactive use, with a median retrieval time under a quarter of a second and a p95 of around 316 ms. That latency is especially attractive for a local legal assistant that is expected to respond in near-real time.
+
+### How to Reproduce the Evaluation
+From the repository root, you can regenerate the metrics with the project evaluation pipeline:
+
+```bash
+python evaluation/run_retrieval_eval.py
+python evaluation/score_retrieval.py --input evaluation/retrieval_results.jsonl --json-output evaluation/retrieval_metrics.json --csv-output evaluation/retrieval_per_query.csv
+python evaluation/report_retrieval_eval.py --input evaluation/retrieval_metrics.json --output evaluation/retrieval_report.md
+```
+
+The evaluation is intentionally deterministic and article-centric: it checks whether the retrieved clauses or article numbers match the expected legal reference targets for each query.
+
+### Interpretation & Caveats
+The metrics should be interpreted correctly:
+
+- They measure retrieval quality, not answer correctness or legal judgment quality.
+- A strong retrieval score is necessary but not sufficient for a trustworthy legal assistant.
+- Good synthesis still depends on the language model's reasoning, grounding, and legal phrasing.
+- This benchmark is especially useful for comparing changes to the vector store, metadata filters, query expansion, and retrieval ranking behavior.
+
+### Recommended Next Steps
+The main opportunities for improvement are:
+
+1. Improve colloquial and scenario-based query handling.
+2. Evaluate follow-up queries with conversation context included, not as isolated prompts.
+3. Add hybrid retrieval (dense + lexical + metadata) for harder legal queries.
+4. Measure answer quality separately with citation verification and legal consistency checks.
+5. Use the benchmark as a stable regression suite when changing embeddings, rerankers, or query expansion behavior.
+
+---
+
 ## ⚠️ Disclaimer
 **This is an AI-powered informative tool and does not constitute certified legal advice.** The answers generated are based on semantic retrieval from provided texts and probabilistic language models. Always consult a licensed attorney in the Arab Republic of Egypt for official legal rulings, contract drafting, and personal legal matters.

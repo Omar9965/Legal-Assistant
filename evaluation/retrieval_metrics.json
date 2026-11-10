@@ -1,0 +1,205 @@
+{
+  "dataset": {
+    "evaluated_queries": 185,
+    "failed_queries": 0,
+    "k_values": [
+      1,
+      3,
+      5,
+      10
+    ],
+    "relevance_unit": "article_number"
+  },
+  "overall": {
+    "recall@1": 0.3595,
+    "precision@1": 0.4757,
+    "hit_rate@1": 0.4757,
+    "recall@3": 0.5473,
+    "precision@3": 0.2685,
+    "hit_rate@3": 0.6811,
+    "recall@5": 0.6338,
+    "precision@5": 0.1978,
+    "hit_rate@5": 0.7351,
+    "recall@10": 0.7225,
+    "precision@10": 0.1178,
+    "hit_rate@10": 0.8,
+    "mrr": 0.5862
+  },
+  "by_type": {
+    "article_lookup": {
+      "query_count": 13,
+      "metrics": {
+        "recall@1": 0.7692,
+        "precision@1": 0.7692,
+        "hit_rate@1": 0.7692,
+        "recall@3": 0.7692,
+        "precision@3": 0.2564,
+        "hit_rate@3": 0.7692,
+        "recall@5": 0.7692,
+        "precision@5": 0.1538,
+        "hit_rate@5": 0.7692,
+        "recall@10": 0.7692,
+        "precision@10": 0.0769,
+        "hit_rate@10": 0.7692,
+        "mrr": 0.7692
+      }
+    },
+    "article_lookup_multi": {
+      "query_count": 2,
+      "metrics": {
+        "recall@1": 0.0,
+        "precision@1": 0.0,
+        "hit_rate@1": 0.0,
+        "recall@3": 0.0,
+        "precision@3": 0.0,
+        "hit_rate@3": 0.0,
+        "recall@5": 0.0,
+        "precision@5": 0.0,
+        "hit_rate@5": 0.0,
+        "recall@10": 0.0,
+        "precision@10": 0.0,
+        "hit_rate@10": 0.0,
+        "mrr": 0.0
+      }
+    },
+    "colloquial": {
+      "query_count": 6,
+      "metrics": {
+        "recall@1": 0.0833,
+        "precision@1": 0.1667,
+        "hit_rate@1": 0.1667,
+        "recall@3": 0.1667,
+        "precision@3": 0.1111,
+        "hit_rate@3": 0.1667,
+        "recall@5": 0.1667,
+        "precision@5": 0.0667,
+        "hit_rate@5": 0.1667,
+        "recall@10": 0.1667,
+        "precision@10": 0.0333,
+        "hit_rate@10": 0.1667,
+        "mrr": 0.1667
+      }
+    },
+    "conceptual": {
+      "query_count": 110,
+      "metrics": {
+        "recall@1": 0.4015,
+        "precision@1": 0.5727,
+        "hit_rate@1": 0.5727,
+        "recall@3": 0.6212,
+        "precision@3": 0.3303,
+        "hit_rate@3": 0.8,
+        "recall@5": 0.7318,
+        "precision@5": 0.2436,
+        "hit_rate@5": 0.8545,
+        "recall@10": 0.8258,
+        "precision@10": 0.1445,
+        "hit_rate@10": 0.9182,
+        "mrr": 0.6926
+      }
+    },
+    "english": {
+      "query_count": 20,
+      "metrics": {
+        "recall@1": 0.375,
+        "precision@1": 0.4,
+        "hit_rate@1": 0.4,
+        "recall@3": 0.55,
+        "precision@3": 0.2,
+        "hit_rate@3": 0.6,
+        "recall@5": 0.6417,
+        "precision@5": 0.16,
+        "hit_rate@5": 0.75,
+        "recall@10": 0.7167,
+        "precision@10": 0.09,
+        "hit_rate@10": 0.8,
+        "mrr": 0.5329
+      }
+    },
+    "followup": {
+      "query_count": 6,
+      "metrics": {
+        "recall@1": 0.0,
+        "precision@1": 0.0,
+        "hit_rate@1": 0.0,
+        "recall@3": 0.2083,
+        "precision@3": 0.1111,
+        "hit_rate@3": 0.3333,
+        "recall@5": 0.2917,
+        "precision@5": 0.1333,
+        "hit_rate@5": 0.3333,
+        "recall@10": 0.4167,
+        "precision@10": 0.1,
+        "hit_rate@10": 0.5,
+        "mrr": 0.1667
+      }
+    },
+    "scenario": {
+      "query_count": 28,
+      "metrics": {
+        "recall@1": 0.1548,
+        "precision@1": 0.2143,
+        "hit_rate@1": 0.2143,
+        "recall@3": 0.3452,
+        "precision@3": 0.1667,
+        "hit_rate@3": 0.4643,
+        "recall@5": 0.3988,
+        "precision@5": 0.1214,
+        "hit_rate@5": 0.5,
+        "recall@10": 0.5357,
+        "precision@10": 0.0821,
+        "hit_rate@10": 0.6071,
+        "mrr": 0.343
+      }
+    }
+  },
+  "by_language": {
+    "ar": {
+      "query_count": 160,
+      "metrics": {
+        "recall@1": 0.3438,
+        "precision@1": 0.475,
+        "hit_rate@1": 0.475,
+        "recall@3": 0.5391,
+        "precision@3": 0.2771,
+        "hit_rate@3": 0.6875,
+        "recall@5": 0.6276,
+        "precision@5": 0.2038,
+        "hit_rate@5": 0.7312,
+        "recall@10": 0.7208,
+        "precision@10": 0.1225,
+        "hit_rate@10": 0.8,
+        "mrr": 0.5862
+      }
+    },
+    "en": {
+      "query_count": 25,
+      "metrics": {
+        "recall@1": 0.46,
+        "precision@1": 0.48,
+        "hit_rate@1": 0.48,
+        "recall@3": 0.6,
+        "precision@3": 0.2133,
+        "hit_rate@3": 0.64,
+        "recall@5": 0.6733,
+        "precision@5": 0.16,
+        "hit_rate@5": 0.76,
+        "recall@10": 0.7333,
+        "precision@10": 0.088,
+        "hit_rate@10": 0.8,
+        "mrr": 0.5863
+      }
+    }
+  },
+  "latency_ms": {
+    "mean": 430.84,
+    "median": 261.59,
+    "p95": 323.55
+  },
+  "notes": [
+    "Macro-average: each query contributes equally.",
+    "Article IDs are deduplicated in ranked retrieval order.",
+    "Unlabeled greeting/out-of-domain records are excluded.",
+    "Article lookup queries should also be inspected separately from semantic queries."
+  ]
+}
