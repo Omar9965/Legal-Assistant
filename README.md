@@ -112,71 +112,95 @@ Project/
 ## 🚀 Setup & Installation
 
 ### 1. Prerequisites
-Ensure you have **Python 3.10+** installed. It is highly recommended to use a virtual environment.
+This project is configured for a local Python environment and has a ready-to-use virtual environment under `myenv/` in the repository root. You can also create your own virtual environment if needed.
 
-```bash
-# Create a Virtual Environment
-python -m venv agents-env
+```powershell
+# Use the repo's bundled environment (Windows)
+.\myenv\Scripts\Activate.ps1
 
-# Activate (Windows)
-.\agents-env\Scripts\activate
-
-# Activate (Mac/Linux)
-source agents-env/bin/activate
+# Or create a fresh venv
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
 
+The codebase targets **Python 3.10+** and is verified against the local environment in this repo (`myenv/`).
+
 ### 2. Install Dependencies
-Install all required libraries from the `requirements.txt`:
-```bash
-pip install -r requirements.txt
+Install the project requirements from the root directory:
+
+```powershell
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
 ### 3. Environment Variables
-Create a `.env` file in the root directory. **The models will fail to load with a clear error message if these are missing.**
+Create a `.env` file in the project root. This repo expects the standard LLM, embedding, and retrieval settings used by `utils/config.py`.
 
 ```env
-# Required: API key & endpoint for the LLM (any OpenAI-compatible server)
+# Required: LLM provider (any OpenAI-compatible endpoint)
 API_KEY=your_api_key_here
-LLM_BASE_URL=https://ollama.com/v1
-LLM_MODEL=gemma4:31b
+LLM_BASE_URL=http://localhost:11434/v1
+LLM_MODEL=llama3.1:8b
 
-# Required: Core parameters
+# Required: Embedding + retrieval settings
 SIMILARITY_THRESHOLD=0.80
 TOP_K=5
 EMBEDDING_MODEL=mohamed2811/Muffakir_Embedding_V2
+EMBEDDING_DEVICE=cpu
 
-# Optional: Cache tuning
+# Optional: cache tuning
 CACHE_ROUTE_CONFIDENCE=0.70
 CACHE_TTL_SECONDS=86400
 
-# Optional: HuggingFace Token (if using gated models)
+# Optional: Hugging Face access token for gated models
 HF_TOKEN=your_hf_token_here
+
+# Optional: override data locations if needed
+CHROMA_DB_PATH=data/chroma_db
+PROCESSED_DIR=data/processed
+PDF_DIR=PDF
 ```
 
 ### 4. Document Ingestion (Data Pipeline)
-To populate the vector database with legal knowledge, place your source PDFs in the `PDF/` directory and run the ingestion script. This will parse the PDFs, clean the text, perform semantic chunking, and persist the embeddings.
+Place the legal source PDFs in the `PDF/` directory and run the ingestion script. The pipeline extracts text, normalizes Arabic content, chunks it, and stores embeddings in the local ChromaDB database.
 
-```bash
+```powershell
 python process.py
 ```
-*Note: You can safely run this command multiple times. It uses MD5 file hashing to skip unchanged PDFs automatically, saving processing time.*
 
-> **Upgrading?** The vector store now uses the cosine distance metric. If you have data from an older version, delete the `data/` directory once and re-run `python process.py` so everything is re-embedded consistently.
+This command is safe to re-run: it skips unchanged PDFs by checking the extracted text and hash, so the index is only rebuilt for changed documents.
+
+> If you are upgrading from an older version of the vector store, delete `data/chroma_db` once and rerun `python process.py` so the embeddings are rebuilt consistently with the current cosine metric.
 
 ### 5. Running the Assistant
-You can launch the complete pipeline and the Streamlit UI using the following commands:
+Start the Streamlit legal assistant from the project root:
 
-**Option A (Using App Launcher):**
-This acts as the standard entry point and spins up Streamlit locally.
-```bash
+```powershell
 python app.py
 ```
 
-**Option B (Direct Streamlit Run):**
-If you want to run Streamlit directly targeting the presentation layer:
-```bash
+You can also run the interface directly:
+
+```powershell
 python -m streamlit run views/streamlit_app.py
 ```
+
+### 6. Repository Quick Start (This Repo)
+This repository includes the full application layout for a legal RAG pipeline:
+
+- `app.py` starts the Streamlit UI
+- `process.py` ingests and updates the legal document index
+- `controllers/` contains the LangGraph routing and agent orchestration
+- `models/` contains the ChromaDB vector store, caching, and embedding logic
+- `views/` contains the chat UI
+- `data/` stores the vector database and processed legal text
+
+The default workflow is:
+
+1. Add or update PDFs in `PDF/`
+2. Run `python process.py`
+3. Launch `python app.py`
+4. Ask legal questions in Arabic or English
 
 ---
 
