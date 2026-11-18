@@ -62,7 +62,7 @@ class ResearcherAgent:
             results, effective_query, language
         )
 
-        top_results = [doc for doc, score in scored_results[:TOP_K]]
+        top_results = [doc for doc, _ in scored_results[:TOP_K]]
 
         return {
             "retrieved_docs": top_results,
