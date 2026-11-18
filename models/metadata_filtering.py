@@ -13,21 +13,12 @@ from typing import List, Optional, Tuple
 
 from langchain_core.documents import Document
 
-from utils.constants import LEGAL_CATEGORIES
+from document_processor import _detect_category
 
 
-def detect_category_from_query(query: str, language: str = "ar") -> Optional[str]:
-    """Detect the legal category of a query using word-boundary matching.
 
-    Word-boundary aware so a keyword embedded inside a longer word does not
-    cause a false positive. Mirrors document_processor._detect_category so
-    documents and queries are classified consistently.
-    """
-    for category, keywords in LEGAL_CATEGORIES.items():
-        for keyword in keywords:
-            if re.search(rf"(?<!\w){re.escape(keyword)}(?!\w)", query):
-                return category
-    return None
+
+
 
 
 class RelevanceScorer:
@@ -40,7 +31,7 @@ class RelevanceScorer:
         language: str = "ar",
     ) -> List[Tuple[Document, float]]:
         """Score and sort documents by relevance. Returns [(doc, score), ...]."""
-        query_category = detect_category_from_query(query, language)
+        query_category = _detect_category(query, language)
 
         scored_docs = []
         for doc in documents:

@@ -8,7 +8,8 @@ config access (e.g. the ingestion script) does not pull in model libraries.
 """
 
 from functools import lru_cache
-
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import ChatOpenAI
 from utils.config import (
     EMBEDDING_DEVICE,
     EMBEDDING_MODEL_NAME,
@@ -26,7 +27,7 @@ def get_embedding_function():
             "EMBEDDING_MODEL is not set. Define it in your .env file "
             "(see .env.example)."
         )
-    from langchain_huggingface import HuggingFaceEmbeddings
+    
 
     return HuggingFaceEmbeddings(
         model_name=EMBEDDING_MODEL_NAME,
@@ -48,7 +49,7 @@ def get_llm():
             "LLM_BASE_URL is not set. Define it in your .env file "
             "(see .env.example)."
         )
-    from langchain_openai import ChatOpenAI
+    
 
     return ChatOpenAI(
         model=LLM_MODEL_NAME,

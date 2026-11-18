@@ -8,7 +8,7 @@ Strategies:
 
 import logging
 from typing import List
-
+from models.resources import get_llm
 from langchain_core.prompts import ChatPromptTemplate
 
 logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ def _llm_expand(query: str, language: str = "ar", max_variations: int = 3) -> Li
     Returns:
         List of expanded queries (may be empty if LLM fails).
     """
-    from models.resources import get_llm
+
 
     try:
         llm = get_llm()
